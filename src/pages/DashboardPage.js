@@ -85,7 +85,7 @@ function DashboardPage() {
         }}
       >
         <h2 style={{ margin: 0, fontSize: 22 }}>
-          📊 แดชบอร์ดสำหรับ: <span style={{ textTransform: "capitalize" }}>{role}</span>
+          📊 ทดสอบ แดชบอร์ดสำหรับ: <span style={{ textTransform: "capitalize" }}>{role}</span>
         </h2>
         <button
           onClick={handleLogout}
