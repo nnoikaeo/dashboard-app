@@ -1,11 +1,9 @@
 import React from "react";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../firebase";
-import { getDoc, doc, getFirestore, setDoc } from "firebase/firestore";
+import { getDoc, doc, getFirestore, setDoc, collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
-// const auth = getAuth();
 const db = getFirestore();
 const provider = new GoogleAuthProvider();
 
@@ -19,7 +17,6 @@ function LoginPage() {
 
       if (!user) return;
 
-      // 🔎 เช็ก role จาก Firestore
       const userRef = doc(db, "users", user.uid);
       const userSnap = await getDoc(userRef);
 
@@ -28,7 +25,6 @@ function LoginPage() {
       if (userSnap.exists()) {
         role = userSnap.data().role || "guest";
       } else {
-        // ✅ หากยังไม่มีใน Firestore → สร้างใหม่
         await setDoc(userRef, {
           email: user.email,
           displayName: user.displayName,
@@ -36,7 +32,6 @@ function LoginPage() {
         });
       }
 
-      // หลังจากเช็กหรือสร้าง role แล้ว
       await addDoc(collection(db, "loginLogs"), {
         uid: user.uid,
         email: user.email,
@@ -44,7 +39,6 @@ function LoginPage() {
         timestamp: serverTimestamp()
       });
 
-      // 🔁 นำทางตาม role
       if (role === "admin") {
         navigate("/admin");
       } else {
@@ -62,30 +56,49 @@ function LoginPage() {
       alignItems: "center",
       justifyContent: "center",
       height: "100vh",
-      backgroundColor: "#f0f4f8"
+      backgroundColor: "#003087", // สีน้ำเงินหลัก
     }}>
       <div style={{
         backgroundColor: "#fff",
-        padding: "40px 50px",
-        borderRadius: 12,
-        boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-        textAlign: "center"
+        padding: "50px 60px",
+        borderRadius: 16,
+        boxShadow: "0 8px 24px rgba(0, 0, 0, 0.2)",
+        textAlign: "center",
+        maxWidth: 420
       }}>
-        <h2 style={{ fontSize: 24, marginBottom: 20 }}>🔐 เข้าสู่ระบบด้วย Google</h2>
-        <p style={{ fontSize: 14, marginBottom: 30, color: "#555" }}>
-          กรุณาเข้าสู่ระบบเพื่อเข้าใช้งานระบบแดชบอร์ดภายในองค์กรของคุณ
+        <img
+          src="/streamwash-logo.png" // 👈 ให้คุณนำโลโก้ไปวางไว้ใน public folder ด้วยชื่อไฟล์นี้
+          alt="Streamwash Logo"
+          style={{ width: 100, marginBottom: 20 }}
+        />
+        <h2 style={{
+          fontSize: 24,
+          marginBottom: 16,
+          color: "#003087"
+        }}>เข้าสู่ระบบด้วยบัญชี Google</h2>
+
+        <p style={{
+          fontSize: 14,
+          marginBottom: 30,
+          color: "#555"
+        }}>
+          เข้าสู่ระบบเพื่อดูข้อมูลแดชบอร์ดภายในองค์กร Streamwash
         </p>
+
         <button
           onClick={handleLogin}
           style={{
-            backgroundColor: "#4285F4",
+            backgroundColor: "#1E90FF",
             color: "#fff",
-            padding: "12px 24px",
+            padding: "12px 28px",
             fontSize: 16,
             border: "none",
-            borderRadius: 6,
-            cursor: "pointer"
+            borderRadius: 8,
+            cursor: "pointer",
+            transition: "0.3s ease",
           }}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#187bcd"}
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#1E90FF"}
         >
           Sign in with Google
         </button>
