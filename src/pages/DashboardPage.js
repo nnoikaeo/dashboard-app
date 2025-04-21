@@ -4,7 +4,6 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/streamwash-logo.png"; // เพิ่มโลโก้ที่ path นี้
 
 function DashboardPage() {
   const [role, setRole] = useState("");
@@ -90,8 +89,8 @@ function DashboardPage() {
       >
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <img
-            src={logo}
-            alt="logo"
+            src="/streamwash-logo.jpg"
+            alt="Streamwash Logo"
             style={{ height: 50, borderRadius: 12 }}
           />
           <div>
