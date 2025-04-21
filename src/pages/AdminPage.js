@@ -101,17 +101,20 @@ function AdminPage() {
         backgroundColor: "#fff",
         padding: "20px 30px",
         borderRadius: 12,
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)"
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+        borderLeft: "6px solid #002D8B"
       }}>
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           <img
             src="/streamwash-logo.jpg"
             alt="Streamwash Logo"
-            style={{ height: 40, marginRight: 15, borderRadius: 8, boxShadow: "0 0 4px rgba(0,0,0,0.1)" }}
+            style={{ height: 50, borderRadius: 12 }}
           />
           <div>
-            <h1 style={{ fontSize: 20, fontWeight: 600, margin: 0, color: "#002D8B" }}>แผงควบคุมผู้ดูแลระบบ</h1>
-            <p style={{ fontSize: 14, margin: 0, color: "#555" }}>👤 {auth.currentUser?.displayName}</p>
+            <div style={{ fontSize: 18, fontWeight: 600, color: "#002D8B" }}>แผงควบคุมผู้ดูแลระบบ</div>
+            {auth.currentUser?.displayName && (
+              <div style={{ fontSize: 14, color: "#666" }}>👤 {auth.currentUser?.displayName}</div>
+            )}
           </div>
         </div>
         <button
