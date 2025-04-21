@@ -1,5 +1,5 @@
 // DashboardPage.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
@@ -11,6 +11,19 @@ function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
   const navigate = useNavigate();
+  const iframeRef = useRef(null);
+
+  const handleFullscreen = () => {
+    if (iframeRef.current.requestFullscreen) {
+      iframeRef.current.requestFullscreen();
+    } else if (iframeRef.current.webkitRequestFullscreen) {
+      iframeRef.current.webkitRequestFullscreen();
+    } else if (iframeRef.current.mozRequestFullScreen) {
+      iframeRef.current.mozRequestFullScreen();
+    } else if (iframeRef.current.msRequestFullscreen) {
+      iframeRef.current.msRequestFullscreen();
+    }
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -94,28 +107,47 @@ function DashboardPage() {
             style={{ height: 50, borderRadius: 12 }}
           />
           <div>
-            <div style={{ fontSize: 18, fontWeight: 600, color: "#002D8B" }}>แดชบอร์ดสำหรับ: {role}</div>
+            <div style={{ fontSize: 18, fontWeight: 600, color: "#002D8B" }}>
+              แดชบอร์ดสำหรับ: {role}
+            </div>
             {user?.displayName && (
               <div style={{ fontSize: 14, color: "#666" }}>👤 {user.displayName}</div>
             )}
           </div>
         </div>
 
-        <button
-          onClick={handleLogout}
-          style={{
-            backgroundColor: "#FF4C4C",
-            color: "#fff",
-            border: "none",
-            padding: "10px 20px",
-            borderRadius: 8,
-            cursor: "pointer",
-            fontWeight: 500,
-            boxShadow: "0 2px 6px rgba(0,0,0,0.1)"
-          }}
-        >
-          ออกจากระบบ
-        </button>
+        <div style={{ display: "flex", gap: 10 }}>
+          <button
+            onClick={handleFullscreen}
+            style={{
+              backgroundColor: "#002D8B",
+              color: "#fff",
+              padding: "10px 20px",
+              border: "none",
+              borderRadius: 8,
+              cursor: "pointer",
+              fontWeight: 500,
+              boxShadow: "0 2px 6px rgba(0,0,0,0.1)"
+            }}
+          >
+            🔎 ขยายเต็มจอ
+          </button>
+          <button
+            onClick={handleLogout}
+            style={{
+              backgroundColor: "#FF4C4C",
+              color: "#fff",
+              border: "none",
+              padding: "10px 20px",
+              borderRadius: 8,
+              cursor: "pointer",
+              fontWeight: 500,
+              boxShadow: "0 2px 6px rgba(0,0,0,0.1)"
+            }}
+          >
+            ออกจากระบบ
+          </button>
+        </div>
       </div>
 
       {urls.length > 0 ? (
@@ -143,9 +175,11 @@ function DashboardPage() {
           </div>
 
           <iframe
+            ref={iframeRef}
             src={urls[activeTab]}
             width="100%"
             height="800"
+            allowFullScreen
             style={{
               border: "none",
               borderRadius: 12,
