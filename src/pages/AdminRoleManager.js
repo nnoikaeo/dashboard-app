@@ -7,8 +7,8 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
-import Dialog from "./components/ui/Dialog";
-import Button from "./components/ui/Button";
+import Dialog from "../components/ui/Dialog";
+import Button from "../components/ui/Button";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZRyxHis9OVIfacCTrgbg_cRbl1afSNiU",
@@ -125,116 +125,7 @@ function AdminRoleManager() {
         </div>
       </Dialog>
     </div>
-    // <div style={{ padding: 20 }}>
-    //   <h2>ระบบจัดการบทบาทผู้ใช้งาน</h2>
-    //   <table border="1" cellPadding="10" style={{ marginTop: 20, width: "100%" }}>
-    //     <thead>
-    //       <tr>
-    //         <th>ชื่อ</th>
-    //         <th>อีเมล</th>
-    //         <th>บทบาท</th>
-    //       </tr>
-    //     </thead>
-    //     <tbody>
-    //       {users.map((user) => (
-    //         <tr key={user.id}>
-    //           <td>{user.displayName}</td>
-    //           <td>{user.email}</td>
-    //           <td>
-    //             <select
-    //               value={user.role || "guest"}
-    //               onChange={(e) => handleRoleChange(user.id, e.target.value, user.role)}
-    //             >
-    //               <option value="executive">Executive</option>
-    //               <option value="admin-officer">Administrator Officer</option>
-    //               <option value="officer">Officer</option>
-    //               <option value="admin">Administrator</option>
-    //               <option value="guest">Guest</option>
-    //             </select>
-    //           </td>
-    //         </tr>
-    //       ))}
-    //     </tbody>
-    //   </table>
-
-    //   <Dialog open={!!pendingChange} onOpenChange={(open) => !open && setPendingChange(null)}>
-    //     <div className="bg-white p-6 rounded-xl shadow-lg max-w-md w-full text-center">
-    //       <h3 className="text-lg font-semibold mb-2">ยืนยันการเปลี่ยนบทบาท</h3>
-    //       <p className="mb-4">
-    //         คุณแน่ใจหรือไม่ว่าต้องการเปลี่ยนบทบาทเป็น
-    //         <strong> {pendingChange?.newRole}</strong>?
-    //       </p>
-    //       <div className="flex justify-center gap-4">
-    //         <Button onClick={confirmRoleChange}>ยืนยัน</Button>
-    //         <Button variant="outline" onClick={() => setPendingChange(null)}>
-    //           ยกเลิก
-    //         </Button>
-    //       </div>
-    //     </div>
-    //   </Dialog>
-    // </div>
   );
 }
-//   const handleRoleChange = async (userId, newRole, currentRole) => {
-//     if (newRole === currentRole) return;
-
-//     const confirmChange = window.confirm(
-//       `คุณแน่ใจหรือไม่ว่าต้องการเปลี่ยนบทบาทเป็น "${newRole}"?`
-//     );
-
-//     if (!confirmChange) return;
-
-//     try {
-//       const userRef = doc(db, "users", userId);
-//       await updateDoc(userRef, { role: newRole });
-//       setUsers((prevUsers) =>
-//         prevUsers.map((user) =>
-//           user.id === userId ? { ...user, role: newRole } : user
-//         )
-//       );
-//     } catch (err) {
-//       console.error("Error updating role:", err);
-//       alert("ไม่สามารถอัปเดตบทบาทผู้ใช้ได้");
-//     }
-//   };
-
-//   if (loading) return <p>กำลังโหลดข้อมูล...</p>;
-//   if (error) return <p className="text-red-600">{error}</p>;
-
-//   return (
-//     <div style={{ padding: 20 }}>
-//       <h2>ระบบจัดการบทบาทผู้ใช้งาน</h2>
-//       <table border="1" cellPadding="10" style={{ marginTop: 20, width: "100%" }}>
-//         <thead>
-//           <tr>
-//             <th>ชื่อ</th>
-//             <th>อีเมล</th>
-//             <th>บทบาท</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {users.map((user) => (
-//             <tr key={user.id}>
-//               <td>{user.displayName}</td>
-//               <td>{user.email}</td>
-//               <td>
-//                 <select
-//                   value={user.role || "guest"}
-//                   onChange={(e) => handleRoleChange(user.id, e.target.value)}
-//                 >
-//                   <option value="executive">Executive</option>
-//                   <option value="admin-officer">Administrator Officer</option>
-//                   <option value="officer">Officer</option>
-//                   <option value="admin">Administrator</option>
-//                   <option value="guest">Guest</option>
-//                 </select>
-//               </td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// }
 
 export default AdminRoleManager;

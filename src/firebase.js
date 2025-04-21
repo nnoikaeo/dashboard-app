@@ -1,9 +1,8 @@
-// src/firebase.js
 import { initializeApp, getApps } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getFunctions } from "firebase/functions";
 
-// ✅ กำหนด config ตรงนี้
 const firebaseConfig = {
   apiKey: "AIzaSyCZRyxHis9OVIfacCTrgbg_cRbl1afSNiU",
   authDomain: "dashboard-8d8d9.firebaseapp.com",
@@ -14,12 +13,12 @@ const firebaseConfig = {
 };
 
 // ✅ ป้องกัน initialize ซ้ำ
-// const app = getApps().length === 0 ? initializeApp(firebaseConfig) : undefined;
-
 if (getApps().length === 0) {
   initializeApp(firebaseConfig);
 }
 
-
 export const auth = getAuth();
 export const db = getFirestore();
+
+// ✅ เพิ่ม region ให้ถูกต้อง (ต้องตรงกับที่ deploy)
+export const functions = getFunctions(undefined, "us-central1");
