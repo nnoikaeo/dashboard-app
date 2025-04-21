@@ -69,7 +69,14 @@ function LoginPage() {
         <img
           src="/streamwash-logo.jpg" // 👈 ให้คุณนำโลโก้ไปวางไว้ใน public folder ด้วยชื่อไฟล์นี้
           alt="Streamwash Logo"
-          style={{ width: 100, marginBottom: 20 }}
+          style={{
+            width: 100,
+            height: 100,
+            objectFit: "cover",
+            borderRadius: "12px", // ✅ ทำให้โลโก้โค้งมน
+            marginBottom: 20,
+            boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)"
+          }}
         />
         <h2 style={{
           fontSize: 24,
