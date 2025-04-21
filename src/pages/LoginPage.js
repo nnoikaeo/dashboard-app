@@ -67,7 +67,7 @@ function LoginPage() {
         maxWidth: 420
       }}>
         <img
-          src="/streamwash-logo.png" // 👈 ให้คุณนำโลโก้ไปวางไว้ใน public folder ด้วยชื่อไฟล์นี้
+          src="/streamwash-logo.jpg" // 👈 ให้คุณนำโลโก้ไปวางไว้ใน public folder ด้วยชื่อไฟล์นี้
           alt="Streamwash Logo"
           style={{ width: 100, marginBottom: 20 }}
         />
