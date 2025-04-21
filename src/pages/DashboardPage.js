@@ -4,9 +4,11 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { useNavigate } from "react-router-dom";
+import logo from "../assets/streamwash-logo.png"; // เพิ่มโลโก้ที่ path นี้
 
 function DashboardPage() {
   const [role, setRole] = useState("");
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
   const navigate = useNavigate();
@@ -14,6 +16,7 @@ function DashboardPage() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
+        setUser(user);
         const userRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
@@ -85,9 +88,20 @@ function DashboardPage() {
           borderLeft: "6px solid #002D8B"
         }}
       >
-        <h2 style={{ margin: 0, fontSize: 22, color: "#002D8B" }}>
-          📊 แดชบอร์ดสำหรับ: <span style={{ fontWeight: 600, textTransform: "capitalize" }}>{role}</span>
-        </h2>
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <img
+            src={logo}
+            alt="logo"
+            style={{ height: 50, borderRadius: 12 }}
+          />
+          <div>
+            <div style={{ fontSize: 18, fontWeight: 600, color: "#002D8B" }}>แดชบอร์ดสำหรับ: {role}</div>
+            {user?.displayName && (
+              <div style={{ fontSize: 14, color: "#666" }}>👤 {user.displayName}</div>
+            )}
+          </div>
+        </div>
+
         <button
           onClick={handleLogout}
           style={{
