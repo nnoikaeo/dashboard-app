@@ -1,3 +1,4 @@
+// AdminPage.js
 import React, { useState, useEffect, useCallback } from "react";
 import AdminRoleManager from "../AdminRoleManager";
 import { signOut } from "firebase/auth";
@@ -91,44 +92,50 @@ function AdminPage() {
   );
 
   return (
-    <div style={{ padding: 40, backgroundColor: "#f7f9fc", minHeight: "100vh" }}>
+    <div style={{ padding: 40, backgroundColor: "#f0f4fb", minHeight: "100vh" }}>
+      {/* Header */}
       <div style={{
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        marginBottom: 30,
-        backgroundColor: "#fff",
+        backgroundColor: "#ffffff",
         padding: "20px 30px",
         borderRadius: 12,
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)"
+        marginBottom: 30,
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
+        borderLeft: "6px solid #002D8B"
       }}>
-        <h1 style={{ fontSize: 24, fontWeight: 600, margin: 0 }}>👨‍💼 แผงควบคุมผู้ดูแลระบบ</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 600, color: "#002D8B", margin: 0 }}>
+          👨‍💼 แผงควบคุมผู้ดูแลระบบ
+        </h1>
         <button
           onClick={handleLogout}
           style={{
-            backgroundColor: "#dc3545",
-            color: "white",
+            backgroundColor: "#FF4C4C",
+            color: "#fff",
             border: "none",
-            padding: "10px 16px",
-            borderRadius: 6,
+            padding: "10px 20px",
+            borderRadius: 8,
             cursor: "pointer",
-            fontSize: 14
+            fontWeight: 500
           }}
         >
           ออกจากระบบ
         </button>
       </div>
 
+      {/* Tabs */}
       <div style={{ marginBottom: 20 }}>
         <button
           onClick={() => setActiveTab("logs")}
           style={{
             marginRight: 10,
             padding: "10px 16px",
-            borderRadius: 6,
-            backgroundColor: activeTab === "logs" ? "#007bff" : "#fff",
-            color: activeTab === "logs" ? "#fff" : "#007bff",
-            border: "1px solid #007bff",
+            borderRadius: 8,
+            backgroundColor: activeTab === "logs" ? "#002D8B" : "#fff",
+            color: activeTab === "logs" ? "#fff" : "#002D8B",
+            border: "2px solid #002D8B",
+            fontWeight: 500,
             cursor: "pointer"
           }}
         >
@@ -138,10 +145,11 @@ function AdminPage() {
           onClick={() => setActiveTab("roles")}
           style={{
             padding: "10px 16px",
-            borderRadius: 6,
-            backgroundColor: activeTab === "roles" ? "#007bff" : "#fff",
-            color: activeTab === "roles" ? "#fff" : "#007bff",
-            border: "1px solid #007bff",
+            borderRadius: 8,
+            backgroundColor: activeTab === "roles" ? "#002D8B" : "#fff",
+            color: activeTab === "roles" ? "#fff" : "#002D8B",
+            border: "2px solid #002D8B",
+            fontWeight: 500,
             cursor: "pointer"
           }}
         >
@@ -149,12 +157,13 @@ function AdminPage() {
         </button>
       </div>
 
+      {/* Content Box */}
       <div style={{ backgroundColor: "#fff", padding: 30, borderRadius: 12, boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
         {activeTab === "roles" && <AdminRoleManager />}
 
         {activeTab === "logs" && (
           <>
-            <h2 style={{ marginBottom: 20 }}>📜 ประวัติการเข้าใช้งานระบบ</h2>
+            <h2 style={{ marginBottom: 20, color: "#002D8B" }}>📜 ประวัติการเข้าใช้งานระบบ</h2>
 
             <div style={{ marginBottom: 20 }}>
               <label style={{ marginRight: 10 }}>แสดงรายการต่อหน้า:</label>
@@ -188,11 +197,11 @@ function AdminPage() {
             ) : (
               <>
                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                  <thead style={{ backgroundColor: "#f1f3f5" }}>
+                  <thead style={{ backgroundColor: "#e6ecf5" }}>
                     <tr>
-                      <th style={{ padding: 10, textAlign: "left" }}>ชื่อ</th>
-                      <th style={{ padding: 10, textAlign: "left" }}>อีเมล</th>
-                      <th style={{ padding: 10, textAlign: "left" }}>เวลาเข้าใช้งาน</th>
+                      <th style={{ padding: 10, textAlign: "left", color: "#002D8B" }}>ชื่อ</th>
+                      <th style={{ padding: 10, textAlign: "left", color: "#002D8B" }}>อีเมล</th>
+                      <th style={{ padding: 10, textAlign: "left", color: "#002D8B" }}>เวลาเข้าใช้งาน</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -207,23 +216,34 @@ function AdminPage() {
                     ))}
                   </tbody>
                 </table>
-                <div style={{ textAlign: "center", marginTop: 20 }}>
+
+                {/* Pagination */}
+                <div style={{ textAlign: "center", marginTop: 30 }}>
                   <button
                     onClick={() => fetchLogs(0)}
                     disabled={currentPage === 0}
-                    style={{ marginRight: 10, padding: "8px 14px", borderRadius: 6, cursor: currentPage === 0 ? "not-allowed" : "pointer", backgroundColor: currentPage === 0 ? "#ccc" : "#007bff", color: "white", border: "none" }}
+                    style={{
+                      marginRight: 10,
+                      padding: "8px 14px",
+                      borderRadius: 6,
+                      cursor: currentPage === 0 ? "not-allowed" : "pointer",
+                      backgroundColor: currentPage === 0 ? "#ccc" : "#002D8B",
+                      color: "#fff",
+                      border: "none"
+                    }}
                   >
                     หน้าแรก
                   </button>
+
                   {Array.from({ length: totalPages }, (_, i) => (
                     <button
                       key={i}
                       onClick={() => fetchLogs(i)}
                       style={{
                         marginRight: 6,
-                        backgroundColor: currentPage === i ? "#007bff" : "#fff",
-                        color: currentPage === i ? "#fff" : "#007bff",
-                        border: "1px solid #007bff",
+                        backgroundColor: currentPage === i ? "#002D8B" : "#fff",
+                        color: currentPage === i ? "#fff" : "#002D8B",
+                        border: "1px solid #002D8B",
                         padding: "8px 14px",
                         borderRadius: 6,
                         cursor: "pointer"
@@ -232,10 +252,18 @@ function AdminPage() {
                       {i + 1}
                     </button>
                   ))}
+
                   <button
                     onClick={() => fetchLogs(totalPages - 1)}
                     disabled={currentPage === totalPages - 1}
-                    style={{ padding: "8px 14px", borderRadius: 6, cursor: currentPage === totalPages - 1 ? "not-allowed" : "pointer", backgroundColor: currentPage === totalPages - 1 ? "#ccc" : "#007bff", color: "white", border: "none" }}
+                    style={{
+                      padding: "8px 14px",
+                      borderRadius: 6,
+                      cursor: currentPage === totalPages - 1 ? "not-allowed" : "pointer",
+                      backgroundColor: currentPage === totalPages - 1 ? "#ccc" : "#002D8B",
+                      color: "#fff",
+                      border: "none"
+                    }}
                   >
                     หน้าสุดท้าย
                   </button>
