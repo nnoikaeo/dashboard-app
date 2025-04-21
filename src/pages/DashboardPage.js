@@ -70,8 +70,8 @@ function DashboardPage() {
 
   const urls = getDashboardUrlsByRole(role);
 
-  rreturn (
-    <div style={{ padding: 40, backgroundColor: "#f5f8fb", minHeight: "100vh" }}>
+  return (
+    <div style={{ padding: 40, backgroundColor: "#f0f4fb", minHeight: "100vh" }}>
       <div
         style={{
           display: "flex",
@@ -104,7 +104,7 @@ function DashboardPage() {
           ออกจากระบบ
         </button>
       </div>
-  
+
       {urls.length > 0 ? (
         <>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 25, flexWrap: "wrap", gap: 8 }}>
@@ -128,7 +128,7 @@ function DashboardPage() {
               </button>
             ))}
           </div>
-  
+
           <iframe
             src={urls[activeTab]}
             width="100%"
@@ -148,6 +148,6 @@ function DashboardPage() {
       )}
     </div>
   );
-}  
+}
 
 export default DashboardPage;
