@@ -92,32 +92,38 @@ function AdminPage() {
   );
 
   return (
-    <div style={{ padding: 40, backgroundColor: "#f0f4fb", minHeight: "100vh" }}>
-      {/* Header */}
+    <div style={{ padding: 40, backgroundColor: "#f7f9fc", minHeight: "100vh" }}>
       <div style={{
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: "#ffffff",
+        marginBottom: 30,
+        backgroundColor: "#fff",
         padding: "20px 30px",
         borderRadius: 12,
-        marginBottom: 30,
-        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
-        borderLeft: "6px solid #002D8B"
+        boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)"
       }}>
-        <h1 style={{ fontSize: 24, fontWeight: 600, color: "#002D8B", margin: 0 }}>
-          👨‍💼 แผงควบคุมผู้ดูแลระบบ
-        </h1>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <img
+            src="/streamwash-logo.jpg"
+            alt="Streamwash Logo"
+            style={{ height: 40, marginRight: 15, borderRadius: 8, boxShadow: "0 0 4px rgba(0,0,0,0.1)" }}
+          />
+          <div>
+            <h1 style={{ fontSize: 20, fontWeight: 600, margin: 0, color: "#002D8B" }}>แผงควบคุมผู้ดูแลระบบ</h1>
+            <p style={{ fontSize: 14, margin: 0, color: "#555" }}>👤 {auth.currentUser?.displayName}</p>
+          </div>
+        </div>
         <button
           onClick={handleLogout}
           style={{
-            backgroundColor: "#FF4C4C",
-            color: "#fff",
+            backgroundColor: "#dc3545",
+            color: "white",
             border: "none",
-            padding: "10px 20px",
-            borderRadius: 8,
+            padding: "10px 16px",
+            borderRadius: 6,
             cursor: "pointer",
-            fontWeight: 500
+            fontSize: 14
           }}
         >
           ออกจากระบบ
