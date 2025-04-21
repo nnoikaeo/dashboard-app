@@ -70,82 +70,84 @@ function DashboardPage() {
 
   const urls = getDashboardUrlsByRole(role);
 
-  return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        backgroundColor: "#ffffff",
-        padding: "20px 30px",
-        borderRadius: 12,
-        marginBottom: 30,
-        boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
-        borderLeft: "6px solid #002D8B"
-      }}
-    >
-      <h2 style={{ margin: 0, fontSize: 22, color: "#002D8B" }}>
-        📊 แดชบอร์ดสำหรับ: <span style={{ fontWeight: 600, textTransform: "capitalize" }}>{role}</span>
-      </h2>
-      <button
-        onClick={handleLogout}
+  rreturn (
+    <div style={{ padding: 40, backgroundColor: "#f5f8fb", minHeight: "100vh" }}>
+      <div
         style={{
-          backgroundColor: "#FF4C4C",
-          color: "#fff",
-          border: "none",
-          padding: "10px 20px",
-          borderRadius: 8,
-          cursor: "pointer",
-          fontWeight: 500,
-          boxShadow: "0 2px 6px rgba(0,0,0,0.1)"
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          backgroundColor: "#ffffff",
+          padding: "20px 30px",
+          borderRadius: 12,
+          marginBottom: 30,
+          boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
+          borderLeft: "6px solid #002D8B"
         }}
       >
-        ออกจากระบบ
-      </button>
-    </div>
-
-    {urls.length > 0 ? (
-      <>
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 25, flexWrap: "wrap", gap: 8 }}>
-          {urls.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setActiveTab(index)}
-              style={{
-                backgroundColor: activeTab === index ? "#002D8B" : "#ffffff",
-                color: activeTab === index ? "#ffffff" : "#002D8B",
-                border: "2px solid #002D8B",
-                padding: "10px 18px",
-                borderRadius: 8,
-                cursor: "pointer",
-                fontWeight: "bold",
-                fontSize: 14,
-                transition: "all 0.2s ease"
-              }}
-            >
-              แดชบอร์ด #{index + 1}
-            </button>
-          ))}
-        </div>
-
-        <iframe
-          src={urls[activeTab]}
-          width="100%"
-          height="800"
+        <h2 style={{ margin: 0, fontSize: 22, color: "#002D8B" }}>
+          📊 แดชบอร์ดสำหรับ: <span style={{ fontWeight: 600, textTransform: "capitalize" }}>{role}</span>
+        </h2>
+        <button
+          onClick={handleLogout}
           style={{
+            backgroundColor: "#FF4C4C",
+            color: "#fff",
             border: "none",
-            borderRadius: 12,
-            boxShadow: "0 3px 18px rgba(0,0,0,0.08)"
+            padding: "10px 20px",
+            borderRadius: 8,
+            cursor: "pointer",
+            fontWeight: 500,
+            boxShadow: "0 2px 6px rgba(0,0,0,0.1)"
           }}
-          title={`Looker Studio Dashboard ${activeTab + 1}`}
-        />
-      </>
-    ) : (
-      <p style={{ color: "#FF4C4C", textAlign: "center" }}>
-        คุณไม่มีสิทธิ์เข้าถึงแดชบอร์ด
-      </p>
-    )}
+        >
+          ออกจากระบบ
+        </button>
+      </div>
+  
+      {urls.length > 0 ? (
+        <>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 25, flexWrap: "wrap", gap: 8 }}>
+            {urls.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setActiveTab(index)}
+                style={{
+                  backgroundColor: activeTab === index ? "#002D8B" : "#ffffff",
+                  color: activeTab === index ? "#ffffff" : "#002D8B",
+                  border: "2px solid #002D8B",
+                  padding: "10px 18px",
+                  borderRadius: 8,
+                  cursor: "pointer",
+                  fontWeight: "bold",
+                  fontSize: 14,
+                  transition: "all 0.2s ease"
+                }}
+              >
+                แดชบอร์ด #{index + 1}
+              </button>
+            ))}
+          </div>
+  
+          <iframe
+            src={urls[activeTab]}
+            width="100%"
+            height="800"
+            style={{
+              border: "none",
+              borderRadius: 12,
+              boxShadow: "0 3px 18px rgba(0,0,0,0.08)"
+            }}
+            title={`Looker Studio Dashboard ${activeTab + 1}`}
+          />
+        </>
+      ) : (
+        <p style={{ color: "#FF4C4C", textAlign: "center" }}>
+          คุณไม่มีสิทธิ์เข้าถึงแดชบอร์ด
+        </p>
+      )}
+    </div>
   );
-}
+}  
 
 export default DashboardPage;
