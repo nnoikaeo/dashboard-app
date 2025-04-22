@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import AdminLogsPage from "./AdminLogsPage";
 import AdminRoleManager from "./AdminRoleManager";
 import InviteUserForm from "./InviteUserForm";
+import SettingPage from "./SettingsPage";
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -72,6 +73,12 @@ function AdminPage() {
           ประวัติการเข้าใช้งาน
         </button>
         <button
+          onClick={() => setActiveTab("settings")}
+          style={tabButtonStyle(activeTab === "settings")}
+        >
+          ตั้งค่าลิงก์แดชบอร์ด
+        </button>
+        <button
           onClick={() => setActiveTab("roles")}
           style={tabButtonStyle(activeTab === "roles")}
         >
@@ -88,6 +95,7 @@ function AdminPage() {
       {/* Content */}
       <div style={{ backgroundColor: "#fff", padding: 30, borderRadius: 12, boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
         {activeTab === "logs" && <AdminLogsPage />}
+        {activeTab === "settings" && <SettingPage />}
         {activeTab === "roles" && <AdminRoleManager />}
         {activeTab === "invite" && <InviteUserForm />}
       </div>
