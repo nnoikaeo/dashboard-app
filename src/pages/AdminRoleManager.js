@@ -7,8 +7,7 @@ import {
   doc,
   updateDoc,
 } from "firebase/firestore";
-import Dialog from "../components/ui/Dialog";
-import Button from "../components/ui/Button";
+import Swal from "sweetalert2";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCZRyxHis9OVIfacCTrgbg_cRbl1afSNiU",
@@ -26,7 +25,6 @@ function AdminRoleManager() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [pendingChange, setPendingChange] = useState(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -48,28 +46,35 @@ function AdminRoleManager() {
     fetchUsers();
   }, []);
 
-  const confirmRoleChange = async () => {
-    if (!pendingChange) return;
-    const { userId, newRole } = pendingChange;
-    try {
-      const userRef = doc(db, "users", userId);
-      await updateDoc(userRef, { role: newRole });
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === userId ? { ...user, role: newRole } : user
-        )
-      );
-    } catch (err) {
-      console.error("Error updating role:", err);
-      alert("ไม่สามารถอัปเดตบทบาทผู้ใช้ได้");
-    } finally {
-      setPendingChange(null);
-    }
-  };
-
-  const handleRoleChange = (userId, newRole, currentRole) => {
+  const handleRoleChange = async (userId, newRole, currentRole) => {
     if (newRole === currentRole) return;
-    setPendingChange({ userId, newRole });
+
+    const result = await Swal.fire({
+      title: "คุณแน่ใจหรือไม่?",
+      text: `คุณต้องการเปลี่ยนบทบาทเป็น ${newRole}?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "ยืนยัน",
+      cancelButtonText: "ยกเลิก",
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33"
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const userRef = doc(db, "users", userId);
+        await updateDoc(userRef, { role: newRole });
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.id === userId ? { ...user, role: newRole } : user
+          )
+        );
+        Swal.fire("สำเร็จ!", "อัปเดตบทบาทผู้ใช้เรียบร้อยแล้ว", "success");
+      } catch (err) {
+        console.error("Error updating role:", err);
+        Swal.fire("ผิดพลาด", "ไม่สามารถอัปเดตบทบาทผู้ใช้ได้", "error");
+      }
+    }
   };
 
   if (loading) return <p>กำลังโหลดข้อมูล...</p>;
@@ -77,13 +82,13 @@ function AdminRoleManager() {
 
   return (
     <div>
-      <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 20 }}>🧑‍💻 รายชื่อผู้ใช้งานและบทบาท</h2>
+      <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 20, color: "#002D8B" }}>🧑‍💻 รายชื่อผู้ใช้งานและบทบาท</h2>
       <table style={{ width: "100%", borderCollapse: "collapse", backgroundColor: "#fff" }}>
-        <thead style={{ backgroundColor: "#f1f3f5" }}>
+        <thead style={{ backgroundColor: "#e6ecf5" }}>
           <tr>
-            <th style={{ padding: 12, textAlign: "left", borderBottom: "1px solid #ccc" }}>ชื่อ</th>
-            <th style={{ padding: 12, textAlign: "left", borderBottom: "1px solid #ccc" }}>อีเมล</th>
-            <th style={{ padding: 12, textAlign: "left", borderBottom: "1px solid #ccc" }}>บทบาท</th>
+            <th style={{ padding: 12, textAlign: "left", color: "#002D8B" }}>ชื่อ</th>
+            <th style={{ padding: 12, textAlign: "left", color: "#002D8B" }}>อีเมล</th>
+            <th style={{ padding: 12, textAlign: "left", color: "#002D8B" }}>บทบาท</th>
           </tr>
         </thead>
         <tbody>
@@ -108,22 +113,6 @@ function AdminRoleManager() {
           ))}
         </tbody>
       </table>
-
-      <Dialog open={!!pendingChange} onOpenChange={(open) => !open && setPendingChange(null)}>
-        <div className="bg-white p-6 rounded-xl shadow-lg max-w-md w-full text-center">
-          <h3 className="text-lg font-semibold mb-2">ยืนยันการเปลี่ยนบทบาท</h3>
-          <p className="mb-4">
-            คุณแน่ใจหรือไม่ว่าต้องการเปลี่ยนบทบาทเป็น
-            <strong> {pendingChange?.newRole}</strong>?
-          </p>
-          <div className="flex justify-center gap-4" style={{ marginTop: 20 }}>
-            <Button onClick={confirmRoleChange}>ยืนยัน</Button>
-            <Button variant="outline" onClick={() => setPendingChange(null)}>
-              ยกเลิก
-            </Button>
-          </div>
-        </div>
-      </Dialog>
     </div>
   );
 }

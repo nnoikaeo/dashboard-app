@@ -10,6 +10,7 @@ function DashboardPage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
+  const [dashboardLinks, setDashboardLinks] = useState(null);
   const navigate = useNavigate();
   const iframeRef = useRef(null);
 
@@ -32,9 +33,17 @@ function DashboardPage() {
         const userRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) {
-          setRole(userSnap.data().role || "guest");
-        } else {
-          setRole("guest");
+          const userRole = userSnap.data().role || "guest";
+          setRole(userRole);
+
+          // ดึง dashboardLinks จาก Firestore
+          const configRef = doc(db, "dashboardLinks", "settings");
+          const configSnap = await getDoc(configRef);
+          if (configSnap.exists()) {
+            setDashboardLinks(configSnap.data());
+          } else {
+            setDashboardLinks({});
+          }
         }
       }
       setLoading(false);
@@ -42,33 +51,6 @@ function DashboardPage() {
 
     return () => unsubscribe();
   }, []);
-
-  const getDashboardUrlsByRole = (role) => {
-    const dashboards = {
-      executive: [
-        "https://lookerstudio.google.com/embed/reporting/d95a3df9-e38b-4002-b5b4-89ba8585a5e3/page/p_90bk1iqchd",
-        "https://example.com/executive/2",
-        "https://example.com/executive/3",
-        "https://example.com/executive/4",
-        "https://example.com/executive/5"
-      ],
-      "admin-officer": [
-        "https://lookerstudio.google.com/embed/reporting/36b29895-7d9a-4099-965a-2165ac81d874/page/hdyGF",
-        "https://example.com/admin/2",
-        "https://example.com/admin/3",
-        "https://example.com/admin/4",
-        "https://example.com/admin/5"
-      ],
-      officer: [
-        "https://lookerstudio.google.com/embed/reporting/458ef5af-1040-47e8-8d85-5731f8d12213/page/O6ouE",
-        "https://example.com/officer/2",
-        "https://example.com/officer/3",
-        "https://example.com/officer/4",
-        "https://example.com/officer/5"
-      ],
-    };
-    return dashboards[role] || [];
-  };
 
   const handleLogout = async () => {
     try {
@@ -83,7 +65,7 @@ function DashboardPage() {
     return <p style={{ textAlign: "center" }}>กำลังโหลดแดชบอร์ด...</p>;
   }
 
-  const urls = getDashboardUrlsByRole(role);
+  const urls = dashboardLinks?.[role] || [];
 
   return (
     <div style={{ padding: 40, backgroundColor: "#f0f4fb", minHeight: "100vh" }}>

@@ -6,6 +6,7 @@ import { auth } from "./firebase";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import AdminPage from "./pages/AdminPage";
+import SettingsPage from "./pages/SettingsPage";
 
 function App() {
   // const auth = getAuth();
@@ -33,6 +34,10 @@ function App() {
         <Route
           path="/admin"
           element={user ? <AdminPage /> : <Navigate to="/login" replace />}
+        />
+        <Route 
+          path="/settings" 
+          element={user ? <SettingsPage /> : <Navigate to="/login" replace />} 
         />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
