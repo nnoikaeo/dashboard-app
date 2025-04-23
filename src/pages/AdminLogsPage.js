@@ -1,4 +1,4 @@
-// ✅ AdminLogsPage.js (ฉบับสมบูรณ์ พร้อมโหลดข้อมูลและกรองผลลัพธ์)
+// ✅ AdminLogsPage.js (ปรับ pagination เป็นแบบมีปุ่ม << < 1 2 3 4 5 > >>)
 import React, { useState, useEffect, useCallback } from "react";
 import { getFirestore, collection, getDocs, orderBy, query } from "firebase/firestore";
 import { format } from "date-fns";
@@ -49,6 +49,50 @@ function AdminLogsPage() {
     currentPage * pageSize,
     currentPage * pageSize + pageSize
   );
+
+  const renderPagination = () => {
+    const maxDisplay = 5;
+    let start = Math.max(currentPage - 2, 0);
+    let end = Math.min(start + maxDisplay, totalPages);
+    if (end - start < maxDisplay) {
+      start = Math.max(end - maxDisplay, 0);
+    }
+  
+    const pages = [];
+    if (currentPage > 0) {
+      pages.push(
+        <button onClick={() => setCurrentPage(0)} style={pageButtonStyle(currentPage === 0)}>{"<<"}</button>,
+        <button onClick={() => setCurrentPage(currentPage - 1)} style={pageButtonStyle()}>{"<"}</button>
+      );
+    }
+  
+    for (let i = start; i < end; i++) {
+      pages.push(
+        <button key={i} onClick={() => setCurrentPage(i)} style={pageButtonStyle(currentPage === i)}>
+          {i + 1}
+        </button>
+      );
+    }
+  
+    if (currentPage < totalPages - 1) {
+      pages.push(
+        <button onClick={() => setCurrentPage(currentPage + 1)} style={pageButtonStyle()}>{">"}</button>,
+        <button onClick={() => setCurrentPage(totalPages - 1)} style={pageButtonStyle(currentPage === totalPages - 1)}>{">>"}</button>
+      );
+    }
+  
+    return <div style={{ textAlign: "center", marginTop: 30 }}>{pages}</div>;
+  };
+  
+  const pageButtonStyle = (active) => ({
+    marginRight: 6,
+    backgroundColor: active ? "#002D8B" : "#fff",
+    color: active ? "#fff" : "#002D8B",
+    border: "1px solid #002D8B",
+    padding: "8px 14px",
+    borderRadius: 6,
+    cursor: "pointer"
+  }); 
 
   return (
     <>
@@ -132,25 +176,7 @@ function AdminLogsPage() {
             </tbody>
           </table>
 
-          <div style={{ textAlign: "center", marginTop: 30 }}>
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i)}
-                style={{
-                  marginRight: 6,
-                  backgroundColor: currentPage === i ? "#002D8B" : "#fff",
-                  color: currentPage === i ? "#fff" : "#002D8B",
-                  border: "1px solid #002D8B",
-                  padding: "8px 14px",
-                  borderRadius: 6,
-                  cursor: "pointer"
-                }}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
+          {renderPagination()}
         </>
       )}
     </>
