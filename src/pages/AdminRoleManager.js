@@ -102,11 +102,11 @@ function AdminRoleManager() {
                   onChange={(e) => handleRoleChange(user.id, e.target.value, user.role)}
                   style={{ padding: "6px 10px", borderRadius: 6, border: "1px solid #ccc" }}
                 >
-                  <option value="executive">Executive</option>
-                  <option value="admin-officer">Administrator Officer</option>
-                  <option value="officer">Officer</option>
-                  <option value="admin">Administrator</option>
-                  <option value="guest">Guest</option>
+                  <option value="executive">ผู้บริหาร</option>
+                  <option value="admin-officer">แอดมิน</option>
+                  <option value="officer">ปฏิบัติการ</option>
+                  <option value="admin">ผู้ดูแลระบบ</option>
+                  {/* <option value="guest">Guest</option> */}
                 </select>
               </td>
             </tr>

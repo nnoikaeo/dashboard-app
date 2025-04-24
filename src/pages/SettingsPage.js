@@ -6,8 +6,8 @@ import Swal from "sweetalert2";
 
 const roles = [
   { key: "executive", label: "ผู้บริหาร" },
-  { key: "admin-officer", label: "เจ้าหน้าที่แอดมิน" },
-  { key: "officer", label: "พนักงานทั่วไป" },
+  { key: "admin-officer", label: "แอดมิน" },
+  { key: "officer", label: "ปฏิบัติการ" },
 ];
 
 const SettingsPage = () => {
