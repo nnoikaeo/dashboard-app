@@ -99,7 +99,24 @@ export default function SettingsPage() {
 
   return (
     <div style={{ padding: 0 }}>
-      <h2 style={{ marginBottom: 30, color: "#002D8B" }}>🛠️ ตั้งค่าลิงก์แดชบอร์ด (Role)</h2>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 30 }}>
+        <h2 style={{ color: "#002D8B", margin: 0 }}>🛠️ ตั้งค่าลิงก์แดชบอร์ด (Role)</h2>
+        <button
+          onClick={() => setEditedDashboardLinks(dashboardLinks)}
+          style={{
+            backgroundColor: "#002D8B",
+            color: "#fff",
+            padding: "6px 16px",
+            borderRadius: 6,
+            border: "none",
+            fontSize: 14,
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+        >
+          รีเซต
+        </button>
+      </div>
 
       {roles.map((role) => (
         <div key={role.key} style={{ marginBottom: 40, background: "#f9f9f9", padding: 20, borderRadius: 10 }}>
