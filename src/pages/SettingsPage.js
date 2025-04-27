@@ -51,13 +51,22 @@ export default function SettingsPage() {
 
   const handleSaveDefault = async () => {
     try {
-      await setDoc(doc(db, "dashboardLinks", "settings"), dashboardLinks);
+      // 🛠 ก่อนบันทึก ต้อง normalize ข้อมูลก่อน
+      const normalizedLinks = {};
+      for (const role of roles) {
+        normalizedLinks[role.key] = dashboardLinks[role.key]?.map((link) => ({
+          title: typeof link === 'object' ? (link.title || "") : "",
+          url: typeof link === 'object' ? (link.url || "") : "",
+        })) || Array(5).fill({ title: "", url: "" });
+      }
+  
+      await setDoc(doc(db, "dashboardLinks", "settings"), normalizedLinks);
       Swal.fire({ icon: "success", title: "👏 บันทึกสำเร็จ", timer: 2000, showConfirmButton: false });
     } catch (error) {
       console.error("Error saving:", error);
       Swal.fire("ผิดพลาด", "บันทึกลิงก์ไม่สำเร็จ", "error");
     }
-  };
+  };  
 
   // const handleSaveCustomUser = async () => {
   //   if (!customUserEmail) {
