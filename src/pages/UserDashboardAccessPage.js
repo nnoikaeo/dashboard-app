@@ -58,7 +58,8 @@ export default function UserDashboardAccessPage() {
                     ))}
                   </ul>
                 ) : (
-                  <span style={{ color: "#999" }}>ไม่มีแดชบอร์ด
+                  <span style={{ color: "#999" }}>ไม่มีแดชบอร์ด</span>
+                )}
               </td>
             </tr>
           ))}
