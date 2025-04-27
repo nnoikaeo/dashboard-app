@@ -1,7 +1,7 @@
 import React from "react";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../firebase";
-import { getDoc, setDoc, doc, addDoc, collection, serverTimestamp, getFirestore } from "firebase/firestore";
+import { getDoc, doc, addDoc, collection, serverTimestamp, getFirestore } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
