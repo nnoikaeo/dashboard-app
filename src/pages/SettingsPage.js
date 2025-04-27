@@ -116,7 +116,7 @@ export default function SettingsPage() {
             fontWeight: "bold",
           }}
         >
-          🔄 รีเซต
+          รีเซต
         </button>
       </div>
 
