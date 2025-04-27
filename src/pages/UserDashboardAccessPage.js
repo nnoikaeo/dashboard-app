@@ -80,7 +80,7 @@ export default function UserDashboardAccessPage() {
             <th style={th}>อีเมล</th>
             <th style={th}>บทบาท</th>
             <th style={th}>รายการแดชบอร์ด</th>
-            <th style={th}>การจัดการ</th>
+            <th style={th}>จัดการ</th>
           </tr>
         </thead>
         <tbody>
@@ -102,12 +102,17 @@ export default function UserDashboardAccessPage() {
                 )}
               </td>
               <td style={td}>
-                <button
+                <button onClick={() => openEditModal(user)} 
+                  style={{ backgroundColor: "#fff", color: "#fff", padding: "6px 14px", border: "none", fontSize: 16 }}
+                >
+                  ✏️
+                </button>
+                {/* <button
                   onClick={() => openEditModal(user)}
                   style={{ backgroundColor: "#002D8B", color: "#fff", padding: "6px 14px", borderRadius: 6, border: "none", cursor: "pointer" }}
                 >
                   แก้ไข
-                </button>
+                </button> */}
               </td>
             </tr>
           ))}
