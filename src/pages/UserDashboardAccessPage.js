@@ -132,7 +132,7 @@ export default function UserDashboardAccessPage() {
                   {roles.map((role) => (
                     <div key={role.key} style={{ marginBottom: 20 }}>
                       <b>{role.label}</b>
-                      <ul style={{ paddingLeft: 20 }}>
+                      <ul style={{ paddingLeft: 0, listStyleType: "none" }}>
                         {(dashboardTemplates[role.key] || []).filter((d) => d.title).map((item, idx) => (
                           <li key={idx} style={{ marginTop: 4, cursor: "pointer" }} onClick={() => addDashboard(item)}>
                             ➡️ {item.title}
@@ -146,7 +146,7 @@ export default function UserDashboardAccessPage() {
                 {/* Right Side: Selected Dashboards */}
                 <div style={{ flex: 1, border: "1px solid #ccc", borderRadius: 6, padding: 10, maxHeight: 400, overflowY: "auto" }}>
                   <b>แดชบอร์ดที่สามารถเข้าถึงได้</b>
-                  <ul style={{ paddingLeft: 20, marginTop: 10 }}>
+                  <ul style={{ paddingLeft: 0, marginTop: 10, listStyleType: "none" }}>
                     {selectedDashboards.map((item, idx) => (
                       <li key={idx} style={{ marginTop: 4, cursor: "pointer" }} onClick={() => removeDashboard(item.title)}>
                         ⬅️ {item.title}
