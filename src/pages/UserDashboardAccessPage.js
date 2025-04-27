@@ -164,7 +164,7 @@ export default function UserDashboardAccessPage() {
 
             <div style={{ marginTop: 20, display: "flex", justifyContent: "flex-end", gap: 10 }}>
               <button onClick={() => setEditingUser(null)} style={buttonCancel}>ยกเลิก</button>
-              <button onClick={saveChanges} style={buttonSave}>💾 บันทึกการเปลี่ยนแปลง</button>
+              <button onClick={saveChanges} style={buttonSave}>💾 บันทึก</button>
             </div>
           </div>
         </div>
