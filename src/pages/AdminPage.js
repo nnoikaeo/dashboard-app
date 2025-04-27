@@ -5,7 +5,7 @@ import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import AdminLogsPage from "./AdminLogsPage";
 import AdminRoleManager from "./AdminRoleManager";
-import InviteUserForm from "./InviteUserForm";
+// import InviteUserForm from "./InviteUserForm";
 import SettingPage from "./SettingsPage";
 
 function AdminPage() {
@@ -82,14 +82,14 @@ function AdminPage() {
           onClick={() => setActiveTab("roles")}
           style={tabButtonStyle(activeTab === "roles")}
         >
-          จัดการบทบาทผู้ใช้
+          จัดการผู้ใช้งาน
         </button>
-        <button
+        {/* <button
           onClick={() => setActiveTab("invite")}
           style={tabButtonStyle(activeTab === "invite")}
         >
           เชิญผู้ใช้งาน
-        </button>
+        </button> */}
       </div>
 
       {/* Content */}
@@ -97,7 +97,7 @@ function AdminPage() {
         {activeTab === "logs" && <AdminLogsPage />}
         {activeTab === "settings" && <SettingPage />}
         {activeTab === "roles" && <AdminRoleManager />}
-        {activeTab === "invite" && <InviteUserForm />}
+        {/* {activeTab === "invite" && <InviteUserForm />} */}
       </div>
     </div>
   );

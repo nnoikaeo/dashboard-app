@@ -38,7 +38,7 @@ function AdminLogsPage() {
     const lower = searchQuery.toLowerCase();
     const filtered = allLogs.filter(
       (log) =>
-        log.displayName?.toLowerCase().includes(lower) ||
+        log.name?.toLowerCase().includes(lower) ||
         log.email?.toLowerCase().includes(lower)
     );
     setFilteredLogs(filtered);
@@ -166,7 +166,7 @@ function AdminLogsPage() {
             <tbody>
               {paginatedLogs.map((log, index) => (
                 <tr key={index} style={{ borderBottom: "1px solid #eee" }}>
-                  <td style={{ padding: 10 }}>{log.displayName}</td>
+                  <td style={{ padding: 10 }}>{log.name}</td>
                   <td style={{ padding: 10 }}>{log.email}</td>
                   <td style={{ padding: 10 }}>
                     {log.timestamp?.toDate ? format(log.timestamp.toDate(), "dd/MM/yyyy HH:mm:ss") : "-"}

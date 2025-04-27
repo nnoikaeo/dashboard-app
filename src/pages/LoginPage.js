@@ -1,8 +1,9 @@
 import React from "react";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../firebase";
-import { getDoc, doc, getFirestore, setDoc, collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { getDoc, setDoc, doc, addDoc, collection, serverTimestamp, getFirestore } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const db = getFirestore();
 const provider = new GoogleAuthProvider();
@@ -14,30 +15,45 @@ function LoginPage() {
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-
       if (!user) return;
 
-      const userRef = doc(db, "users", user.uid);
+      const email = user.email;
+      const userRef = doc(db, "users", email); // ✅ ใช้ email เป็น document id
       const userSnap = await getDoc(userRef);
 
-      let role = "guest";
-
-      if (userSnap.exists()) {
-        role = userSnap.data().role || "guest";
-      } else {
-        await setDoc(userRef, {
-          email: user.email,
-          displayName: user.displayName,
-          role: "guest",
+      if (!userSnap.exists()) {
+        await Swal.fire({
+          icon: "error",
+          title: "ไม่พบอีเมลนี้ในระบบ",
+          text: "กรุณาติดต่อผู้ดูแลระบบเพื่อขอสิทธิ์การเข้าใช้งาน",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "ตกลง"
         });
+        return;
       }
 
+      const userData = userSnap.data();
+
+      if (userData.status !== "active") {
+        await Swal.fire({
+          icon: "warning",
+          title: "ยังไม่ได้ยืนยันการลงทะเบียน",
+          text: "กรุณายืนยันการลงทะเบียนก่อนเข้าใช้งาน หรือ ติดต่อผู้ดูแลระบบ",
+          confirmButtonColor: "#f39c12",
+          confirmButtonText: "ตกลง"
+        });
+        return;
+      }
+
+      // ✅ บันทึก loginLogs พร้อมใช้ name แทน displayName
       await addDoc(collection(db, "loginLogs"), {
         uid: user.uid,
         email: user.email,
-        displayName: user.displayName,
+        name: userData.name || user.displayName || "", // 👈 ดึงจาก users collection เป็นหลัก
         timestamp: serverTimestamp()
       });
+
+      const role = userData.role || "guest";
 
       if (role === "admin") {
         navigate("/admin");
@@ -46,7 +62,14 @@ function LoginPage() {
       }
     } catch (error) {
       console.error("Login error", error);
-      alert("เข้าสู่ระบบไม่สำเร็จ");
+      await Swal.fire({
+        icon: "error",
+        title: "เข้าสู่ระบบไม่สำเร็จ",
+        text: "กรุณาลองใหม่อีกครั้ง",
+        confirmButtonColor: "#d33",
+        confirmButtonText: "ตกลง"
+      });
+      navigate("/login");
     }
   };
 
@@ -56,7 +79,7 @@ function LoginPage() {
       alignItems: "center",
       justifyContent: "center",
       height: "100vh",
-      backgroundColor: "#003087", // สีน้ำเงินหลัก
+      backgroundColor: "#003087",
     }}>
       <div style={{
         backgroundColor: "#fff",
@@ -67,31 +90,23 @@ function LoginPage() {
         maxWidth: 420
       }}>
         <img
-          src="/streamwash-logo.jpg" // 👈 ให้คุณนำโลโก้ไปวางไว้ใน public folder ด้วยชื่อไฟล์นี้
+          src="/streamwash-logo.jpg"
           alt="Streamwash Logo"
           style={{
             width: 100,
             height: 100,
             objectFit: "cover",
-            borderRadius: "12px", // ✅ ทำให้โลโก้โค้งมน
+            borderRadius: 12,
             marginBottom: 20,
             boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)"
           }}
         />
-        <h2 style={{
-          fontSize: 24,
-          marginBottom: 16,
-          color: "#003087"
-        }}>เข้าสู่ระบบด้วยบัญชี Google</h2>
-
-        <p style={{
-          fontSize: 14,
-          marginBottom: 30,
-          color: "#555"
-        }}>
+        <h2 style={{ fontSize: 24, marginBottom: 16, color: "#003087" }}>
+          เข้าสู่ระบบด้วยบัญชี Google
+        </h2>
+        <p style={{ fontSize: 14, marginBottom: 30, color: "#555" }}>
           ยินดีต้อนรับเข้าสู่ระบบจัดการแดชบอร์ด
         </p>
-
         <button
           onClick={handleLogin}
           style={{

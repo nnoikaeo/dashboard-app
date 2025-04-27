@@ -1,4 +1,4 @@
-// DashboardPage.js
+// DashboardPage.js (รองรับ array {title, url} แบบสวยๆ)
 import React, { useEffect, useState, useRef } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -10,40 +10,54 @@ function DashboardPage() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(0);
-  const [dashboardLinks, setDashboardLinks] = useState(null);
+  const [dashboards, setDashboards] = useState([]);
   const navigate = useNavigate();
   const iframeRef = useRef(null);
 
   const handleFullscreen = () => {
-    if (iframeRef.current.requestFullscreen) {
+    if (iframeRef.current?.requestFullscreen) {
       iframeRef.current.requestFullscreen();
-    } else if (iframeRef.current.webkitRequestFullscreen) {
-      iframeRef.current.webkitRequestFullscreen();
-    } else if (iframeRef.current.mozRequestFullScreen) {
-      iframeRef.current.mozRequestFullScreen();
-    } else if (iframeRef.current.msRequestFullscreen) {
-      iframeRef.current.msRequestFullscreen();
     }
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setUser(user);
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-          const userRole = userSnap.data().role || "guest";
-          setRole(userRole);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
+        const email = firebaseUser.email;
+        if (!email) {
+          console.error("No email found in user object");
+          setLoading(false);
+          return;
+        }
 
-          // ดึง dashboardLinks จาก Firestore
-          const configRef = doc(db, "dashboardLinks", "settings");
-          const configSnap = await getDoc(configRef);
-          if (configSnap.exists()) {
-            setDashboardLinks(configSnap.data());
+        try {
+          const userRef = doc(db, "users", email);
+          const userSnap = await getDoc(userRef);
+
+          if (userSnap.exists()) {
+            const userData = userSnap.data();
+            setRole(userData.role || "guest");
+
+            if (userData.dashboardLinks && Array.isArray(userData.dashboardLinks)) {
+              // ✅ ถ้ามี dashboardLinks เฉพาะคน
+              setDashboards(userData.dashboardLinks.filter(link => link?.url));
+            } else {
+              // 👉 ถ้าไม่มี dashboardLinks เฉพาะคน ใช้ default ตาม role
+              const roleRef = doc(db, "dashboardLinks", "settings");
+              const roleSnap = await getDoc(roleRef);
+
+              if (roleSnap.exists()) {
+                const roleData = roleSnap.data();
+                const roleLinks = roleData[userData.role] || [];
+                setDashboards(roleLinks.filter(link => link?.url));
+              }
+            }
           } else {
-            setDashboardLinks({});
+            console.error("User document not found");
           }
+        } catch (error) {
+          console.error("Error fetching dashboard:", error);
         }
       }
       setLoading(false);
@@ -65,7 +79,9 @@ function DashboardPage() {
     return <p style={{ textAlign: "center" }}>กำลังโหลดแดชบอร์ด...</p>;
   }
 
-  const urls = dashboardLinks?.[role] || [];
+  if (dashboards.length === 0) {
+    return <p style={{ color: "#FF4C4C", textAlign: "center", fontSize: 18 }}>ไม่พบแดชบอร์ดที่สามารถเข้าถึงได้</p>;
+  }
 
   return (
     <div style={{ padding: 40, backgroundColor: "#f0f4fb", minHeight: "100vh" }}>
@@ -83,11 +99,7 @@ function DashboardPage() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-          <img
-            src="/streamwash-logo.jpg"
-            alt="Streamwash Logo"
-            style={{ height: 50, borderRadius: 12 }}
-          />
+          <img src="/streamwash-logo.jpg" alt="Streamwash Logo" style={{ height: 50, borderRadius: 12 }} />
           <div>
             <div style={{ fontSize: 18, fontWeight: 600, color: "#002D8B" }}>
               แดชบอร์ดสำหรับ: {role}
@@ -119,8 +131,8 @@ function DashboardPage() {
             style={{
               backgroundColor: "#FF4C4C",
               color: "#fff",
-              border: "none",
               padding: "10px 20px",
+              border: "none",
               borderRadius: 8,
               cursor: "pointer",
               fontWeight: 500,
@@ -132,49 +144,41 @@ function DashboardPage() {
         </div>
       </div>
 
-      {urls.length > 0 ? (
-        <>
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 25, flexWrap: "wrap", gap: 8 }}>
-            {urls.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setActiveTab(index)}
-                style={{
-                  backgroundColor: activeTab === index ? "#002D8B" : "#ffffff",
-                  color: activeTab === index ? "#ffffff" : "#002D8B",
-                  border: "2px solid #002D8B",
-                  padding: "10px 18px",
-                  borderRadius: 8,
-                  cursor: "pointer",
-                  fontWeight: "bold",
-                  fontSize: 14,
-                  transition: "all 0.2s ease"
-                }}
-              >
-                แดชบอร์ด #{index + 1}
-              </button>
-            ))}
-          </div>
-
-          <iframe
-            ref={iframeRef}
-            src={urls[activeTab]}
-            width="100%"
-            height="800"
-            allowFullScreen
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: 25, flexWrap: "wrap", gap: 8 }}>
+        {dashboards.map((dashboard, index) => (
+          <button
+            key={index}
+            onClick={() => setActiveTab(index)}
             style={{
-              border: "none",
-              borderRadius: 12,
-              boxShadow: "0 3px 18px rgba(0,0,0,0.08)"
+              backgroundColor: activeTab === index ? "#002D8B" : "#ffffff",
+              color: activeTab === index ? "#ffffff" : "#002D8B",
+              border: "2px solid #002D8B",
+              padding: "10px 18px",
+              borderRadius: 8,
+              cursor: "pointer",
+              fontWeight: "bold",
+              fontSize: 14,
+              transition: "all 0.2s ease"
             }}
-            title={`Looker Studio Dashboard ${activeTab + 1}`}
-          />
-        </>
-      ) : (
-        <p style={{ color: "#FF4C4C", textAlign: "center" }}>
-          คุณไม่มีสิทธิ์เข้าถึงแดชบอร์ด
-        </p>
-      )}
+          >
+            {dashboard.title || `แดชบอร์ด #${index + 1}`}
+          </button>
+        ))}
+      </div>
+
+      <iframe
+        ref={iframeRef}
+        src={dashboards[activeTab]?.url || ""}
+        width="100%"
+        height="800"
+        allowFullScreen
+        style={{
+          border: "none",
+          borderRadius: 12,
+          boxShadow: "0 3px 18px rgba(0,0,0,0.08)"
+        }}
+        title={dashboards[activeTab]?.title || `Looker Studio Dashboard ${activeTab + 1}`}
+      />
     </div>
   );
 }

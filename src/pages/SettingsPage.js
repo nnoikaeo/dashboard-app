@@ -10,38 +10,15 @@ const roles = [
   { key: "officer", label: "ปฏิบัติการ" },
 ];
 
-const SettingsPage = () => {
-  const [dashboardLinks, setDashboardLinks] = useState({
-    executive: ["", "", "", "", ""],
-    "admin-officer": ["", "", "", "", ""],
-    officer: ["", "", "", "", ""],
-  });
+const emptyDashboard = Array(5).fill({ title: "", url: "" });
+
+export default function SettingsPage() {
+  const [dashboardLinks, setDashboardLinks] = useState({});
+  const [customUserEmail, setCustomUserEmail] = useState("");
+  const [customUserLinks, setCustomUserLinks] = useState([...emptyDashboard]);
+  const [useDefaultLinks, setUseDefaultLinks] = useState(true);
   const [loading, setLoading] = useState(true);
-
-  const handleLinkChange = (role, index, value) => {
-    setDashboardLinks((prev) => ({
-      ...prev,
-      [role]: prev[role].map((link, i) => (i === index ? value : link)),
-    }));
-  };
-
-  const handleSave = async () => {
-    try {
-      await setDoc(doc(db, "dashboardLinks", "settings"), dashboardLinks);
-      Swal.fire({
-        icon: "success",
-        title: "บันทึกสำเร็จ",
-        text: "✅ ลิงก์แดชบอร์ดถูกบันทึกเรียบร้อยแล้ว",
-      });
-    } catch (error) {
-      console.error("❌ Error saving dashboard links:", error);
-      Swal.fire({
-        icon: "error",
-        title: "เกิดข้อผิดพลาด",
-        text: "❌ ไม่สามารถบันทึกลิงก์แดชบอร์ดได้",
-      });
-    }
-  };
+  const [emailSearch, setEmailSearch] = useState("");
 
   useEffect(() => {
     const fetchLinks = async () => {
@@ -50,14 +27,14 @@ const SettingsPage = () => {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setDashboardLinks(docSnap.data());
+        } else {
+          const defaultLinks = {};
+          roles.forEach((role) => (defaultLinks[role.key] = [...emptyDashboard]));
+          setDashboardLinks(defaultLinks);
         }
       } catch (err) {
         console.error("Error fetching settings:", err);
-        Swal.fire({
-          icon: "error",
-          title: "โหลดล้มเหลว",
-          text: "ไม่สามารถโหลดลิงก์จากระบบได้",
-        });
+        Swal.fire("โหลดล้มเหลว", "ไม่สามารถานลิงก์จากระบบได้", "error");
       } finally {
         setLoading(false);
       }
@@ -65,35 +42,78 @@ const SettingsPage = () => {
     fetchLinks();
   }, []);
 
-  if (loading) return <p>⏳ กำลังโหลดข้อมูล...</p>;
+  const handleRoleChange = (role, index, field, value) => {
+    setDashboardLinks((prev) => ({
+      ...prev,
+      [role]: prev[role].map((link, i) => (i === index ? { ...link, [field]: value } : link)),
+    }));
+  };
+
+  const handleSaveDefault = async () => {
+    try {
+      await setDoc(doc(db, "dashboardLinks", "settings"), dashboardLinks);
+      Swal.fire({ icon: "success", title: "👏 บันทึกสำเร็จ", timer: 2000, showConfirmButton: false });
+    } catch (error) {
+      console.error("Error saving:", error);
+      Swal.fire("ผิดพลาด", "บันทึกลิงก์ไม่สำเร็จ", "error");
+    }
+  };
+
+  const handleSaveCustomUser = async () => {
+    if (!customUserEmail) {
+      Swal.fire("ระบบอีเมลไม่ถูกต้อง", "warning");
+      return;
+    }
+    try {
+      const userRef = doc(db, "users", customUserEmail);
+      if (useDefaultLinks) {
+        await setDoc(userRef, { dashboardLinks: null }, { merge: true });
+      } else {
+        await setDoc(userRef, { dashboardLinks: customUserLinks }, { merge: true });
+      }
+      Swal.fire({ icon: "success", title: "👏 ตั้งค่าเรียบร้อยแล้ว", timer: 2000, showConfirmButton: false });
+      setCustomUserEmail("");
+      setCustomUserLinks([...emptyDashboard]);
+      setUseDefaultLinks(true);
+    } catch (error) {
+      console.error("Error saving:", error);
+      Swal.fire("ผิดพลาด", "บันทึกลิงก์ไม่สำเร็จ", "error");
+    }
+  };
+
+  if (loading) return <p style={{ textAlign: "center" }}>⏳ กำลังโหลดข้อมูล...</p>;
 
   return (
-    <>
-      <h2 style={{ marginBottom: 20, color: "#002D8B" }}>🔧 ตั้งค่าลิงก์แดชบอร์ด</h2>
+    <div style={{ padding: 0 }}>
+      <h2 style={{ marginBottom: 30, color: "#002D8B" }}>🛠️ ตั้งค่าลิงก์แดชบอร์ด (Role)</h2>
 
       {roles.map((role) => (
-        <div key={role.key} style={{ marginBottom: 30 }}>
-          <h4 style={{ color: "#002D8B" }}>{role.label}</h4>
+        <div key={role.key} style={{ marginBottom: 40, background: "#f9f9f9", padding: 20, borderRadius: 10 }}>
+          <h3 style={{ color: "#002D8B", marginTop: 0, marginBottom: 10 }}>{role.label}</h3>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ backgroundColor: "#e6ecf5" }}>
-                <th style={{ textAlign: "left", padding: 10, color: "#002D8B" }}>ลิงก์</th>
+                <th style={{ ...th, width: "5%" }}>#</th>
+                <th style={{ ...th, width: "35%" }}>ชื่อแดชบอร์ด</th>
+                <th style={{ ...th, width: "60%" }}>URL</th>
               </tr>
             </thead>
             <tbody>
-              {dashboardLinks[role.key].map((link, index) => (
-                <tr key={index} style={{ borderBottom: "1px solid #eee" }}>
-                  <td style={{ padding: 10 }}>
+              {dashboardLinks[role.key]?.map((link, index) => (
+                <tr key={index}>
+                  <td style={{ ...td, width: "5%" }}>{index + 1}</td>
+                  <td style={{ ...td, width: "35%" }}>
                     <input
-                      value={link}
-                      onChange={(e) => handleLinkChange(role.key, index, e.target.value)}
-                      placeholder={`ลิงก์ที่ ${index + 1}`}
-                      style={{
-                        width: "100%",
-                        padding: "10px",
-                        borderRadius: 6,
-                        border: "1px solid #ccc",
-                      }}
+                      value={link.title}
+                      onChange={(e) => handleRoleChange(role.key, index, "title", e.target.value)}
+                      style={{ ...input, width: "100%" }}
+                    />
+                  </td>
+                  <td style={{ ...td, width: "60%" }}>
+                    <input
+                      value={link.url}
+                      onChange={(e) => handleRoleChange(role.key, index, "url", e.target.value)}
+                      style={{ ...input, width: "100%" }}
                     />
                   </td>
                 </tr>
@@ -103,25 +123,66 @@ const SettingsPage = () => {
         </div>
       ))}
 
-      <div style={{ textAlign: "center", marginTop: 40 }}>
-        <button
-          onClick={handleSave}
-          style={{
-            backgroundColor: "#002D8B",
-            color: "#fff",
-            padding: "10px 20px",
-            border: "none",
-            borderRadius: 6,
-            cursor: "pointer",
-            fontWeight: 500,
-            fontSize: 16
-          }}
-        >
-          💾 บันทึกการตั้งค่า
-        </button>
+      <div style={{ textAlign: "center", marginBottom: 50 }}>
+        <button onClick={handleSaveDefault} style={btnPrimary}>💾 บันทึก Default</button>
       </div>
-    </>
-  );
-};
 
-export default SettingsPage;
+      <h2 style={{ marginBottom: 20, color: "#002D8B" }}>🧑‍💻 ตั้งค่าลิงก์เฉพาะบุคคล</h2>
+      <div style={{ marginBottom: 20 }}>
+        <input
+          type="text"
+          placeholder="ค้นหาอีเมลผู้ใช้งาน..."
+          value={emailSearch}
+          onChange={(e) => setEmailSearch(e.target.value)}
+          style={{ ...input, width: 400 }}
+        />
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        <input
+          type="email"
+          placeholder="กรอกอีเมลผู้ใช้งาน"
+          value={customUserEmail}
+          onChange={(e) => setCustomUserEmail(e.target.value)}
+          style={{ ...input, width: 400 }}
+        />
+      </div>
+
+      <div style={{ marginBottom: 20 }}>
+        <label><input type="radio" checked={useDefaultLinks} onChange={() => setUseDefaultLinks(true)} /> ใช้ Default</label>
+        <label style={{ marginLeft: 20 }}><input type="radio" checked={!useDefaultLinks} onChange={() => setUseDefaultLinks(false)} /> กำหนดเอง</label>
+      </div>
+
+      {!useDefaultLinks && (
+        <div>
+          {customUserLinks.map((link, index) => (
+            <div key={index} style={{ display: "flex", gap: 10, marginBottom: 10 }}>
+              <input
+                value={link.title}
+                onChange={(e) => setCustomUserLinks((prev) => prev.map((l, i) => (i === index ? { ...l, title: e.target.value } : l)))}
+                placeholder={`ชื่อแดชบอร์ด #${index + 1}`}
+                style={{ ...input, flex: 1 }}
+              />
+              <input
+                value={link.url}
+                onChange={(e) => setCustomUserLinks((prev) => prev.map((l, i) => (i === index ? { ...l, url: e.target.value } : l)))}
+                placeholder={`URL #${index + 1}`}
+                style={{ ...input, flex: 2 }}
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div style={{ textAlign: "center", marginTop: 30 }}>
+        <button onClick={handleSaveCustomUser} style={btnPrimary}>📂 บันทึกลิงก์เฉพาะบุคคล</button>
+      </div>
+    </div>
+  );
+}
+
+const th = { padding: 10, textAlign: "left", color: "#002D8B" };
+const td = { padding: 10 };
+const input = { padding: 8, border: "1px solid #ccc", borderRadius: 6, width: "100%" };
+const btnPrimary = { backgroundColor: "#002D8B", color: "#fff", padding: "10px 20px", borderRadius: 6, border: "none", fontSize: 16, cursor: "pointer" };
+// const btnSuccess = { backgroundColor: "#28a745", color: "#fff", padding: "10px 20px", borderRadius: 6, border: "none", fontSize: 16, cursor: "pointer" };

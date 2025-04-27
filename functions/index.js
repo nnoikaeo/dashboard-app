@@ -1,7 +1,8 @@
-const functions = require("firebase-functions");
+const { onRequest } = require("firebase-functions/v2/https");
+const logger = require("firebase-functions/logger");
 const nodemailer = require("nodemailer");
+// const cors = require("cors")({ origin: true });
 
-// ✅ แบบ secret (ต้องตั้งไว้แล้วใน firebase)
 const gmailEmail = process.env.GMAIL_EMAIL;
 const gmailPassword = process.env.GMAIL_PASSWORD;
 
@@ -13,38 +14,51 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-exports.sendInviteEmail = functions
-  .runWith({ secrets: ["GMAIL_EMAIL", "GMAIL_PASSWORD"] }) // ✅ ต้องตรงกับที่ตั้ง secret
-  .https.onCall(async (data, context) => {
-    const { email, name, inviteLink } = data;
-
-    if (!context.auth) {
-      throw new functions.https.HttpsError(
-        "unauthenticated",
-        "คุณต้องเข้าสู่ระบบก่อนส่งคำเชิญ"
-      );
+// ✅ Gen 2 Function แบบใหม่
+exports.sendInviteEmail = onRequest(
+  {
+    secrets: ["GMAIL_EMAIL", "GMAIL_PASSWORD"],
+    cors: true, // ✅ Gen 2 มี CORS ใน config ได้เลย
+    region: "us-central1", // ✅ ระบุ region เหมือนเดิม
+  },
+  async (req, res) => {
+    if (req.method !== "POST") {
+      return res.status(405).send("Method Not Allowed");
     }
+
+    const { email, name, inviteLink } = req.body;
 
     const mailOptions = {
       from: `Streamwash Dashboard <${gmailEmail}>`,
       to: email,
       subject: "📩 คำเชิญเข้าใช้งานระบบแดชบอร์ด",
-      html: `
-        <p>สวัสดีคุณ <strong>${name || "ผู้ใช้งานใหม่"}</strong>,</p>
-        <p>คุณได้รับคำเชิญให้เข้าร่วมระบบแดชบอร์ดของบริษัท Streamwash.</p>
-        <p>กรุณาคลิกที่ลิงก์ด้านล่างเพื่อเข้าสู่ระบบ:</p>
-        <p><a href="${inviteLink}">${inviteLink}</a></p>
-        <br/>
-        <p>ขอบคุณครับ/ค่ะ</p>
-        <p>ทีมงาน Streamwash</p>
-      `,
+      html: ` <!-- ← แก้ตรงนี้ -->
+        <p>คุณได้รับคำเชิญให้เข้าร่วมระบบแดชบอร์ดของ บริษัท สทรีมวอช (ประเทศไทย) จำกัด</p>
+        <p>กรุณากดปุ่มด้านล่างเพื่อยืนยันการลงทะเบียน:</p>
+        <p style="text-align: center; margin: 30px 0;">
+          <a href="${inviteLink}" target="_blank" style="
+            background-color: #002D8B;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            font-weight: bold;
+            border-radius: 8px;
+            display: inline-block;
+          ">
+            ✅ ยืนยันการลงทะเบียน
+          </a>
+        </p>
+        <p>หากคุณไม่ได้ร้องขอการเชิญนี้ กรุณาละเว้นอีเมลนี้</p>
+        <p>ขอบคุณครับ/ค่ะ<br/>ทีมงานระบบแดชบอร์ด</p>
+      `
     };
 
     try {
       await transporter.sendMail(mailOptions);
-      return { success: true };
+      res.status(200).json({ success: true });
     } catch (error) {
-      console.error("❌ Error sending email:", error);
-      throw new functions.https.HttpsError("internal", "ไม่สามารถส่งอีเมลได้");
+      logger.error("❌ Error sending email:", error);
+      res.status(500).json({ success: false, message: "ไม่สามารถส่งอีเมลได้" });
     }
-  });
+  }
+);
