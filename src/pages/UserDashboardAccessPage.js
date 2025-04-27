@@ -30,7 +30,7 @@ export default function UserDashboardAccessPage() {
   if (loading) return <p style={{ textAlign: "center" }}>⏳ กำลังโหลดข้อมูล...</p>;
 
   return (
-    <div style={{ padding: 30 }}>
+    <div style={{ padding: 0 }}>
       <h2 style={{ color: "#002D8B", marginBottom: 30 }}>👥 สิทธิ์การเข้าถึงแดชบอร์ด (User Access)</h2>
 
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
