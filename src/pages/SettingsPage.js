@@ -103,6 +103,7 @@ export default function SettingsPage() {
         <h2 style={{ color: "#002D8B", margin: 0 }}>🛠️ ตั้งค่าลิงก์แดชบอร์ด (Role)</h2>
         <button
           onClick={() => setEditedDashboardLinks(dashboardLinks)}
+          disabled={JSON.stringify(editedDashboardLinks) === JSON.stringify(dashboardLinks)}
           style={{
             backgroundColor: "#002D8B",
             color: "#fff",
@@ -110,11 +111,12 @@ export default function SettingsPage() {
             borderRadius: 6,
             border: "none",
             fontSize: 14,
-            cursor: "pointer",
+            cursor: JSON.stringify(editedDashboardLinks) === JSON.stringify(dashboardLinks) ? "not-allowed" : "pointer",
+            opacity: JSON.stringify(editedDashboardLinks) === JSON.stringify(dashboardLinks) ? 0.6 : 1,
             fontWeight: "bold",
           }}
         >
-          รีเซต
+          🔄 รีเซต
         </button>
       </div>
 
