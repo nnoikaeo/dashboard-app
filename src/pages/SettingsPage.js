@@ -98,7 +98,24 @@ export default function SettingsPage() {
 
       {roles.map((role) => (
         <div key={role.key} style={{ marginBottom: 40, background: "#f9f9f9", padding: 20, borderRadius: 10 }}>
-          <h3 style={{ color: "#002D8B", marginTop: 0, marginBottom: 10 }}>{role.label}</h3>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <h3 style={{ color: "#002D8B", margin: 0 }}>{role.label}</h3>
+            <button
+              onClick={() => handleAddDashboardLink(role.key)}
+              style={{
+                backgroundColor: "#002D8B",
+                color: "#fff",
+                padding: "6px 16px",
+                borderRadius: 6,
+                border: "none",
+                fontSize: 14,
+                cursor: "pointer",
+                fontWeight: "bold",
+              }}
+            >
+              ➕ เพิ่ม
+            </button>
+          </div>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ backgroundColor: "#e6ecf5" }}>
@@ -131,6 +148,42 @@ export default function SettingsPage() {
           </table>
         </div>
       ))}
+
+      {/* {roles.map((role) => (
+        <div key={role.key} style={{ marginBottom: 40, background: "#f9f9f9", padding: 20, borderRadius: 10 }}>
+          <h3 style={{ color: "#002D8B", marginTop: 0, marginBottom: 10 }}>{role.label}</h3>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr style={{ backgroundColor: "#e6ecf5" }}>
+                <th style={{ ...th, width: "5%" }}>#</th>
+                <th style={{ ...th, width: "35%" }}>ชื่อแดชบอร์ด</th>
+                <th style={{ ...th, width: "60%" }}>URL</th>
+              </tr>
+            </thead>
+            <tbody>
+              {dashboardLinks[role.key]?.map((link, index) => (
+                <tr key={index}>
+                  <td style={{ ...td, width: "5%" }}>{index + 1}</td>
+                  <td style={{ ...td, width: "35%" }}>
+                    <input
+                      value={link.title}
+                      onChange={(e) => handleRoleChange(role.key, index, "title", e.target.value)}
+                      style={{ ...input, width: "100%" }}
+                    />
+                  </td>
+                  <td style={{ ...td, width: "60%" }}>
+                    <input
+                      value={link.url}
+                      onChange={(e) => handleRoleChange(role.key, index, "url", e.target.value)}
+                      style={{ ...input, width: "100%" }}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))} */}
 
       <div style={{ textAlign: "center", marginBottom: 50 }}>
         <button onClick={handleSaveDefault} style={btnPrimary}>💾 บันทึก Default</button>
