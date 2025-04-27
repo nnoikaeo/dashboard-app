@@ -123,7 +123,7 @@ export default function UserDashboardAccessPage() {
             </select> */}
 
             <div style={{ marginTop: 20 }}>
-              <b>รายการแดชบอร์ด:</b>
+              <b>รายการแดชบอร์ดที่มีสิทธิ์เข้าถึง:</b>
               {dashboardOptions.length > 0 ? (
                 <ul>
                   {dashboardOptions.filter(link => link.title).map((link, idx) => (
