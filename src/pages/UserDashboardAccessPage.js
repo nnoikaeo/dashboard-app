@@ -109,16 +109,18 @@ export default function UserDashboardAccessPage() {
           <div style={modalContent}>
             <h3>🛠️ แก้ไขสิทธิ์การเข้าถึงแดชบอร์ด</h3>
             <p><b>ชื่อ:</b> {editingUser.name || "-"}</p>
+            <p><b>บริษัท:</b> {editingUser.company || "-"}</p>
             <p><b>อีเมล:</b> {editingUser.email || "-"}</p>
+            <p><b>บทบาท:</b> {editingUser.role || "-"}</p>
 
-            <label style={{ marginTop: 10 }}>บทบาท:</label>
+            {/* <label style={{ marginTop: 10 }}>บทบาท:</label>
             <select value={selectedRole} onChange={handleRoleChange} style={inputStyle}>
               <option value="">-- เลือกบทบาท --</option>
               <option value="executive">ผู้บริหาร</option>
               <option value="admin-officer">แอดมิน</option>
               <option value="officer">ปฏิบัติการ</option>
               <option value="admin">ผู้ดูแลระบบ</option>
-            </select>
+            </select> */}
 
             <div style={{ marginTop: 20 }}>
               <b>รายการแดชบอร์ด:</b>
