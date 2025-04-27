@@ -7,6 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import AdminPage from "./pages/AdminPage";
 import SettingsPage from "./pages/SettingsPage";
+import UserDashboardAccessPage from "./pages/UserDashboardAccessPage";
 import ConfirmPage from "./pages/ConfirmPage";
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
           path="/settings" 
           element={user ? <SettingsPage /> : <Navigate to="/login" replace />} 
         />
+        <Route path="/access" element={<UserDashboardAccessPage />} />
         <Route path="/confirm" element={<ConfirmPage />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

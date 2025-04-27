@@ -5,8 +5,8 @@ import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import AdminLogsPage from "./AdminLogsPage";
 import AdminRoleManager from "./AdminRoleManager";
-// import InviteUserForm from "./InviteUserForm";
 import SettingPage from "./SettingsPage";
+import UserDashboardAccessPage from "./UserDashboardAccessPage";
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -79,6 +79,12 @@ function AdminPage() {
           ตั้งค่าลิงก์แดชบอร์ด
         </button>
         <button
+          onClick={() => setActiveTab("accesses")}
+          style={tabButtonStyle(activeTab === "accesses")}
+        >
+          ตั้งค่าลิงก์แดชบอร์ด
+        </button>
+        <button
           onClick={() => setActiveTab("roles")}
           style={tabButtonStyle(activeTab === "roles")}
         >
@@ -96,8 +102,8 @@ function AdminPage() {
       <div style={{ backgroundColor: "#fff", padding: 30, borderRadius: 12, boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
         {activeTab === "logs" && <AdminLogsPage />}
         {activeTab === "settings" && <SettingPage />}
+        {activeTab === "accesses" && <UserDashboardAccessPage />}
         {activeTab === "roles" && <AdminRoleManager />}
-        {/* {activeTab === "invite" && <InviteUserForm />} */}
       </div>
     </div>
   );
