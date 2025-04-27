@@ -107,17 +107,30 @@ export default function SettingsPage() {
             <h3 style={{ color: "#002D8B", margin: 0 }}>{role.label}</h3>
             <button
               onClick={() => handleAddDashboardLink(role.key)}
-              style={{ backgroundColor: "#002D8B", color: "#fff", padding: "6px 16px", borderRadius: 6, border: "none", fontSize: 14, cursor: "pointer", fontWeight: "bold" }}
+              style={{
+                backgroundColor: "#002D8B",
+                color: "#fff",
+                padding: "6px 16px",
+                borderRadius: 6,
+                border: "none",
+                fontSize: 14,
+                cursor: "pointer",
+                fontWeight: "bold",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
             >
-              ➕ เพิ่ม
+              <img src="/plus.png" alt="Add" style={{ width: 16, height: 16 }} />
+              เพิ่ม
             </button>
           </div>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ backgroundColor: "#e6ecf5" }}>
                 <th style={{ ...th, width: "5%" }}>#</th>
-                <th style={{ ...th, width: "35%" }}>ชื่อแดชบอร์ด</th>
-                <th style={{ ...th, width: "55%" }}>URL</th>
+                <th style={{ ...th, width: "25%" }}>ชื่อแดชบอร์ด</th>
+                <th style={{ ...th, width: "65%" }}>URL</th>
                 <th style={{ ...th, width: "5%" }}></th>
               </tr>
             </thead>
@@ -140,7 +153,7 @@ export default function SettingsPage() {
                     />
                   </td>
                   <td style={{ ...td, textAlign: "center" }}>
-                    <button onClick={() => handleDeleteDashboardLink(role.key, index)} style={{ backgroundColor: "#d33", color: "#fff", border: "none", borderRadius: 6, padding: "4px 8px", cursor: "pointer" }}>✖</button>
+                    <button onClick={() => handleDeleteDashboardLink(role.key, index)} style={{ backgroundColor: "#f9f9f9", color: "#fff", border: "none", padding: "4px 8px", fontSize: 16 }}>❌</button>
                   </td>
                 </tr>
               ))}
@@ -150,7 +163,7 @@ export default function SettingsPage() {
       ))}
 
       <div style={{ textAlign: "center", marginBottom: 50 }}>
-        <button onClick={handleSaveDefault} style={btnPrimary}>💾 บันทึก Default</button>
+        <button onClick={handleSaveDefault} style={btnPrimary}>💾 บันทึก</button>
       </div>
     </div>
   );
