@@ -92,7 +92,7 @@ export default function UserDashboardAccessPage() {
               <td style={td}>{formatRole(user.role)}</td>
               <td style={td}>
                 {Array.isArray(user.dashboardLinks) && user.dashboardLinks.length > 0 ? (
-                  <ul style={{ paddingLeft: 20, margin: 0 }}>
+                  <ul style={{ paddingLeft: 0, margin: 0, listStyleType: "none" }}>
                     {user.dashboardLinks.filter((link) => link.title).map((link, idx) => (
                       <li key={idx}>{link.title}</li>
                     ))}
