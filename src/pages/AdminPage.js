@@ -82,7 +82,7 @@ function AdminPage() {
           onClick={() => setActiveTab("accesses")}
           style={tabButtonStyle(activeTab === "accesses")}
         >
-          ตั้งค่าลิงก์แดชบอร์ด
+          ตั้งค่าสิทธิ์การเข้าถึง
         </button>
         <button
           onClick={() => setActiveTab("roles")}
