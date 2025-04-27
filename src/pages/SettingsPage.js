@@ -14,11 +14,11 @@ const emptyDashboard = Array(5).fill({ title: "", url: "" });
 
 export default function SettingsPage() {
   const [dashboardLinks, setDashboardLinks] = useState({});
-  const [customUserEmail, setCustomUserEmail] = useState("");
-  const [customUserLinks, setCustomUserLinks] = useState([...emptyDashboard]);
-  const [useDefaultLinks, setUseDefaultLinks] = useState(true);
+  // const [customUserEmail, setCustomUserEmail] = useState("");
+  // const [customUserLinks, setCustomUserLinks] = useState([...emptyDashboard]);
+  // const [useDefaultLinks, setUseDefaultLinks] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [emailSearch, setEmailSearch] = useState("");
+  // const [emailSearch, setEmailSearch] = useState("");
 
   useEffect(() => {
     const fetchLinks = async () => {
@@ -59,27 +59,27 @@ export default function SettingsPage() {
     }
   };
 
-  const handleSaveCustomUser = async () => {
-    if (!customUserEmail) {
-      Swal.fire("ระบบอีเมลไม่ถูกต้อง", "warning");
-      return;
-    }
-    try {
-      const userRef = doc(db, "users", customUserEmail);
-      if (useDefaultLinks) {
-        await setDoc(userRef, { dashboardLinks: null }, { merge: true });
-      } else {
-        await setDoc(userRef, { dashboardLinks: customUserLinks }, { merge: true });
-      }
-      Swal.fire({ icon: "success", title: "👏 ตั้งค่าเรียบร้อยแล้ว", timer: 2000, showConfirmButton: false });
-      setCustomUserEmail("");
-      setCustomUserLinks([...emptyDashboard]);
-      setUseDefaultLinks(true);
-    } catch (error) {
-      console.error("Error saving:", error);
-      Swal.fire("ผิดพลาด", "บันทึกลิงก์ไม่สำเร็จ", "error");
-    }
-  };
+  // const handleSaveCustomUser = async () => {
+  //   if (!customUserEmail) {
+  //     Swal.fire("ระบบอีเมลไม่ถูกต้อง", "warning");
+  //     return;
+  //   }
+  //   try {
+  //     const userRef = doc(db, "users", customUserEmail);
+  //     if (useDefaultLinks) {
+  //       await setDoc(userRef, { dashboardLinks: null }, { merge: true });
+  //     } else {
+  //       await setDoc(userRef, { dashboardLinks: customUserLinks }, { merge: true });
+  //     }
+  //     Swal.fire({ icon: "success", title: "👏 ตั้งค่าเรียบร้อยแล้ว", timer: 2000, showConfirmButton: false });
+  //     setCustomUserEmail("");
+  //     setCustomUserLinks([...emptyDashboard]);
+  //     setUseDefaultLinks(true);
+  //   } catch (error) {
+  //     console.error("Error saving:", error);
+  //     Swal.fire("ผิดพลาด", "บันทึกลิงก์ไม่สำเร็จ", "error");
+  //   }
+  // };
 
   if (loading) return <p style={{ textAlign: "center" }}>⏳ กำลังโหลดข้อมูล...</p>;
 
@@ -127,7 +127,7 @@ export default function SettingsPage() {
         <button onClick={handleSaveDefault} style={btnPrimary}>💾 บันทึก Default</button>
       </div>
 
-      <h2 style={{ marginBottom: 20, color: "#002D8B" }}>🧑‍💻 ตั้งค่าลิงก์เฉพาะบุคคล</h2>
+      {/* <h2 style={{ marginBottom: 20, color: "#002D8B" }}>🧑‍💻 ตั้งค่าลิงก์เฉพาะบุคคล</h2>
       <div style={{ marginBottom: 20 }}>
         <input
           type="text"
@@ -176,7 +176,7 @@ export default function SettingsPage() {
 
       <div style={{ textAlign: "center", marginTop: 30 }}>
         <button onClick={handleSaveCustomUser} style={btnPrimary}>📂 บันทึกลิงก์เฉพาะบุคคล</button>
-      </div>
+      </div> */}
     </div>
   );
 }
