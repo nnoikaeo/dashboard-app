@@ -121,7 +121,6 @@ export default function SettingsPage() {
                 gap: "6px",
               }}
             >
-              <img src="/plus.png" alt="Add" style={{ width: 16, height: 16 }} />
               เพิ่ม
             </button>
           </div>
