@@ -1,59 +1,69 @@
-// src/pages/UserDashboardAccessPage.js
+// ✅ โค้ด UserDashboardAccessPage.js (เวอร์ชันใหม่ พร้อม Modal แบบ 2 ฝั่งเลือก dashboard)
+
 import React, { useEffect, useState } from "react";
-import { getFirestore, collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { getFirestore, collection, getDocs, doc, updateDoc } from "firebase/firestore";
 
 const db = getFirestore();
+
+const roles = [
+  { key: "executive", label: "ผู้บริหาร" },
+  { key: "admin-officer", label: "แอดมิน" },
+  { key: "officer", label: "ปฏิบัติการ" },
+];
 
 export default function UserDashboardAccessPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [dashboardTemplates, setDashboardTemplates] = useState({});
   const [editingUser, setEditingUser] = useState(null);
-  const [dashboardOptions, setDashboardOptions] = useState([]);
-  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedDashboards, setSelectedDashboards] = useState([]);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchData = async () => {
       try {
-        const usersCol = collection(db, "users");
-        const usersSnapshot = await getDocs(usersCol);
-        const usersList = usersSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        const usersSnapshot = await getDocs(collection(db, "users"));
+        const templatesSnapshot = await getDocs(collection(db, "dashboardLinks"));
+
+        const usersList = usersSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        const templates = templatesSnapshot.docs.find((doc) => doc.id === "settings")?.data() || {};
+
         setUsers(usersList);
+        setDashboardTemplates(templates);
       } catch (error) {
-        console.error("Error fetching users:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
-    fetchUsers();
+    fetchData();
   }, []);
 
-  const openEditModal = async (user) => {
+  const openEditModal = (user) => {
     setEditingUser(user);
-    setSelectedRole(user.role || "");
-    await loadDashboardsByRole(user.role);
+    setSelectedDashboards(user.dashboardLinks || []);
   };
 
-  const loadDashboardsByRole = async (role) => {
-    if (!role) return;
-    try {
-      const docRef = doc(db, "dashboardLinks", "settings");
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setDashboardOptions(data[role] || []);
-      }
-    } catch (error) {
-      console.error("Error loading dashboards by role:", error);
+  const addDashboard = (dashboard) => {
+    if (!selectedDashboards.find((d) => d.title === dashboard.title)) {
+      setSelectedDashboards((prev) => [...prev, dashboard]);
     }
   };
 
-  const handleRoleChange = (e) => {
-    const newRole = e.target.value;
-    setSelectedRole(newRole);
-    loadDashboardsByRole(newRole);
+  const removeDashboard = (title) => {
+    setSelectedDashboards((prev) => prev.filter((d) => d.title !== title));
+  };
+
+  const saveChanges = async () => {
+    if (!editingUser) return;
+
+    try {
+      const userRef = doc(db, "users", editingUser.id);
+      await updateDoc(userRef, { dashboardLinks: selectedDashboards });
+      setUsers((prev) => prev.map((u) => (u.id === editingUser.id ? { ...u, dashboardLinks: selectedDashboards } : u)));
+      setEditingUser(null);
+    } catch (error) {
+      console.error("Error updating user dashboards:", error);
+    }
   };
 
   if (loading) return <p style={{ textAlign: "center" }}>⏳ กำลังโหลดข้อมูล...</p>;
@@ -70,7 +80,7 @@ export default function UserDashboardAccessPage() {
             <th style={th}>อีเมล</th>
             <th style={th}>บทบาท</th>
             <th style={th}>รายการแดชบอร์ด</th>
-            <th style={th}>จัดการ</th>
+            <th style={th}>การจัดการ</th>
           </tr>
         </thead>
         <tbody>
@@ -83,7 +93,7 @@ export default function UserDashboardAccessPage() {
               <td style={td}>
                 {Array.isArray(user.dashboardLinks) && user.dashboardLinks.length > 0 ? (
                   <ul style={{ paddingLeft: 20, margin: 0 }}>
-                    {user.dashboardLinks.filter(link => link.title).map((link, idx) => (
+                    {user.dashboardLinks.filter((link) => link.title).map((link, idx) => (
                       <li key={idx}>{link.title}</li>
                     ))}
                   </ul>
@@ -94,7 +104,7 @@ export default function UserDashboardAccessPage() {
               <td style={td}>
                 <button
                   onClick={() => openEditModal(user)}
-                  style={editButtonStyle}
+                  style={{ backgroundColor: "#002D8B", color: "#fff", padding: "6px 14px", borderRadius: 6, border: "none", cursor: "pointer" }}
                 >
                   แก้ไข
                 </button>
@@ -104,6 +114,7 @@ export default function UserDashboardAccessPage() {
         </tbody>
       </table>
 
+      {/* Modal */}
       {editingUser && (
         <div style={modalOverlay}>
           <div style={modalContent}>
@@ -111,33 +122,44 @@ export default function UserDashboardAccessPage() {
             <p><b>ชื่อ:</b> {editingUser.name || "-"}</p>
             <p><b>บริษัท:</b> {editingUser.company || "-"}</p>
             <p><b>อีเมล:</b> {editingUser.email || "-"}</p>
-            <p><b>บทบาท:</b> {editingUser.role || "-"}</p>
-
-            {/* <label style={{ marginTop: 10 }}>บทบาท:</label>
-            <select value={selectedRole} onChange={handleRoleChange} style={inputStyle}>
-              <option value="">-- เลือกบทบาท --</option>
-              <option value="executive">ผู้บริหาร</option>
-              <option value="admin-officer">แอดมิน</option>
-              <option value="officer">ปฏิบัติการ</option>
-              <option value="admin">ผู้ดูแลระบบ</option>
-            </select> */}
+            <p><b>บทบาท:</b> {formatRole(editingUser.role)}</p>
 
             <div style={{ marginTop: 20 }}>
-              <b>รายการแดชบอร์ดที่มีสิทธิ์เข้าถึง:</b>
-              {dashboardOptions.length > 0 ? (
-                <ul>
-                  {dashboardOptions.filter(link => link.title).map((link, idx) => (
-                    <li key={idx}>{link.title}</li>
+              <b>กำหนดสิทธิ์:</b>
+              <div style={{ display: "flex", gap: 20, marginTop: 10 }}>
+                {/* Left Side: Groups */}
+                <div style={{ flex: 1, border: "1px solid #ccc", borderRadius: 6, padding: 10, maxHeight: 400, overflowY: "auto" }}>
+                  {roles.map((role) => (
+                    <div key={role.key} style={{ marginBottom: 20 }}>
+                      <b>{role.label}</b>
+                      <ul style={{ paddingLeft: 20 }}>
+                        {(dashboardTemplates[role.key] || []).filter((d) => d.title).map((item, idx) => (
+                          <li key={idx} style={{ marginTop: 4, cursor: "pointer" }} onClick={() => addDashboard(item)}>
+                            ➡️ {item.title}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   ))}
-                </ul>
-              ) : (
-                <p style={{ color: "#999" }}>ไม่มีแดชบอร์ด</p>
-              )}
+                </div>
+
+                {/* Right Side: Selected Dashboards */}
+                <div style={{ flex: 1, border: "1px solid #ccc", borderRadius: 6, padding: 10, maxHeight: 400, overflowY: "auto" }}>
+                  <b>แดชบอร์ดที่สามารถเข้าถึงได้</b>
+                  <ul style={{ paddingLeft: 20, marginTop: 10 }}>
+                    {selectedDashboards.map((item, idx) => (
+                      <li key={idx} style={{ marginTop: 4, cursor: "pointer" }} onClick={() => removeDashboard(item.title)}>
+                        ⬅️ {item.title}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
 
             <div style={{ marginTop: 20, display: "flex", justifyContent: "flex-end", gap: 10 }}>
               <button onClick={() => setEditingUser(null)} style={buttonCancel}>ยกเลิก</button>
-              {/* <button style={buttonSave}>💾 บันทึกการเปลี่ยนแปลง</button> */}
+              <button onClick={saveChanges} style={buttonSave}>💾 บันทึกการเปลี่ยนแปลง</button>
             </div>
           </div>
         </div>
@@ -148,20 +170,10 @@ export default function UserDashboardAccessPage() {
 
 const th = { padding: 12, textAlign: "left", color: "#002D8B", fontWeight: 600 };
 const td = { padding: 12, verticalAlign: "top" };
-const editButtonStyle = {
-  backgroundColor: "#002D8B",
-  color: "#fff",
-  padding: "8px 16px",
-  border: "none",
-  borderRadius: 6,
-  cursor: "pointer",
-  fontSize: 14,
-};
 const modalOverlay = { position: "fixed", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 999 };
-const modalContent = { backgroundColor: "#fff", padding: 30, borderRadius: 10, width: 400 };
-const inputStyle = { width: "100%", padding: 10, marginTop: 6, borderRadius: 6, border: "1px solid #ccc" };
-const buttonCancel = { backgroundColor: "#ccc", padding: "8px 16px", border: "none", borderRadius: 6, cursor: "pointer" };
-// const buttonSave = { backgroundColor: "#28a745", color: "#fff", padding: "8px 16px", border: "none", borderRadius: 6, cursor: "pointer" };
+const modalContent = { backgroundColor: "#fff", padding: 30, borderRadius: 10, width: 700, maxHeight: "90vh", overflowY: "auto" };
+const buttonCancel = { backgroundColor: "#ccc", padding: "10px 20px", border: "none", borderRadius: 6, cursor: "pointer" };
+const buttonSave = { backgroundColor: "#002D8B", color: "#fff", padding: "10px 20px", border: "none", borderRadius: 6, cursor: "pointer" };
 
 const formatRole = (role) => {
   switch (role) {
