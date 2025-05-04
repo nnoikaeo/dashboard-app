@@ -1,8 +1,7 @@
 // ✅ AdminRoleManager (with Edit & Invite Modals)
 import React, { useEffect, useState } from "react";
-import { initializeApp } from "firebase/app";
+import { db } from "../firebase"; // ✅ ใช้ instance กลางร่วมกัน
 import {
-  getFirestore,
   collection,
   doc,  
   deleteDoc,
@@ -13,19 +12,7 @@ import {
 } from "firebase/firestore";
 import Swal from "sweetalert2";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCZRyxHis9OVIfacCTrgbg_cRbl1afSNiU",
-  authDomain: "dashboard-8d8d9.firebaseapp.com",
-  projectId: "dashboard-8d8d9",
-  storageBucket: "dashboard-8d8d9.firebasestorage.app",
-  messagingSenderId: "484283384158",
-  appId: "1:484283384158:web:88392f6019d9a6c25dcfcf"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const companies = ["STSS", "STSB", "STEB", "OAYT", "INFE", "OPCB", "INHH", "STCM", "OCRI", "STPL", "STNR", "STUD", "STKK", "STUB", "STPT", "STCN", "STRY", "STPK", "STHY", "STKB", "STSM", "STCS", "STTN", "STTH"];
+const companies = ["INFE", "INHH", "OAYT", "OCRI", "OPCB", "STCM", "STCN", "STCS", "STEB", "STHY", "STKB", "STKK", "STNR", "STPK", "STPL", "STPT", "STRY", "STSM", "STSS", "STTH", "STTN", "STTN", "STUB", "STUD"];
 const roles = ["executive", "admin-officer", "officer", "admin"];
 const statuses = ["active", "inactive", "suspended"];
 

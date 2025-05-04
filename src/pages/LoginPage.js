@@ -17,8 +17,7 @@ function LoginPage() {
       const user = result.user;
       if (!user) return;
 
-      const email = user.email;
-      const userRef = doc(db, "users", email); // ✅ ใช้ email เป็น document id
+      const userRef = doc(db, "users", user.uid); // ✅ ใช้ uid แทน email
       const userSnap = await getDoc(userRef);
 
       if (!userSnap.exists()) {

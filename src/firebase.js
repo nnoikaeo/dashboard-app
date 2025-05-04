@@ -1,24 +1,21 @@
-import { initializeApp, getApps } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getFunctions } from "firebase/functions";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCZRyxHis9OVIfacCTrgbg_cRbl1afSNiU",
-  authDomain: "dashboard-8d8d9.firebaseapp.com",
-  projectId: "dashboard-8d8d9",
-  storageBucket: "dashboard-8d8d9.firebasestorage.app",
-  messagingSenderId: "484283384158",
-  appId: "1:484283384158:web:88392f6019d9a6c25dcfcf"
+  apiKey: "AIzaSyCMcOtGg4gaSa4co_rzirF8VsAAtXkGPsg",
+  authDomain: "dashboard-app-19e56.firebaseapp.com",
+  projectId: "dashboard-app-19e56",
+  storageBucket: "dashboard-app-19e56.firebasestorage.app",
+  messagingSenderId: "781001175263",
+  appId: "1:781001175263:web:e697b34b17daf1e1b1f96a",
+  measurementId: "G-Y7JT1SZC6G"
 };
 
-// ✅ ป้องกัน initialize ซ้ำ
-if (getApps().length === 0) {
-  initializeApp(firebaseConfig);
-}
+// ✅ ป้องกัน initialize ซ้ำอย่างถูกต้อง
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-export const auth = getAuth();
-export const db = getFirestore();
-
-// ✅ เพิ่ม region ให้ถูกต้อง (ต้องตรงกับที่ deploy)
-export const functions = getFunctions(undefined, "us-central1");
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const functions = getFunctions(app, "us-central1");
